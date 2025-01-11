@@ -113,6 +113,7 @@ public class LessonService : ILessonService
                 lesson.MeetingToken = meeting.Token;
                 lesson.MeetingDomain = meeting.Domain;
                 lesson.MeetingUrl = meeting.ServerUrl;
+                lesson.MeetingRoomName = meeting.RoomName;
                 lesson.MeetingRoomUrl = meeting.MeetingUrl;
             }
             catch (Exception ex)
@@ -291,6 +292,7 @@ public class LessonService : ILessonService
             Topic = lesson.Listing?.Title ?? "Lesson",
             MeetingToken = lesson.MeetingToken,
             MeetingDomain = lesson.MeetingDomain,
+            MeetingRoomName = lesson.MeetingRoomName,
             MeetingUrl = lesson.MeetingUrl,
             MeetingRoomUrl = lesson.MeetingRoomUrl
         };

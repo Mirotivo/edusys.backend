@@ -12,4 +12,5 @@ public class LessonDto
     public string? MeetingDomain { get; set; }
     public string? MeetingUrl { get; set; }
     public string? MeetingRoomUrl { get; set; }
+    public string? MeetingRoomName { get; set; }
 }
