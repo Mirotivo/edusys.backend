@@ -241,7 +241,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.MapHub<NotificationHub>("/api/notification");
+        app.MapHub<NotificationHub>("/notification");
         app.MapGet("/", async context =>
         {
             await context.Response.WriteAsync("Welcome to the dev page!");
