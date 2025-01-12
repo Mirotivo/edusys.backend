@@ -155,14 +155,14 @@ public class Program
                 var googleOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Google").Get<GoogleOptions>();
                 options.ClientId = googleOptions?.ClientId ?? string.Empty;
                 options.ClientSecret = googleOptions?.ClientSecret ?? string.Empty;
-                options.CallbackPath = "/signin-google";
+                options.CallbackPath = "/api/signin-google";
             })
             .AddFacebook(options =>
             {
                 var facebookOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Facebook").Get<FacebookOptions>();
                 options.AppId = facebookOptions?.AppId ?? string.Empty;
                 options.AppSecret = facebookOptions?.AppSecret ?? string.Empty;
-                options.CallbackPath = "/signin-facebook";
+                options.CallbackPath = "/api/signin-facebook";
             });
 
         builder.Services.AddHttpClient();
