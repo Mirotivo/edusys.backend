@@ -47,7 +47,7 @@ public class FacebookUserPayload
 
 public class FacebookPicture
 {
-    public FacebookPictureData Data { get; set; } = string.Empty;
+    public FacebookPictureData Data { get; set; }
 }
 
 public class FacebookPictureData
