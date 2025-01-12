@@ -1,6 +1,8 @@
 using System;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using AutoMapper;
 using Backend.Interfaces;
 using Backend.Interfaces.Billing;
@@ -8,6 +10,7 @@ using Backend.Middleware;
 using Backend.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -153,6 +156,13 @@ public class Program
                 options.ClientId = googleOptions?.ClientId ?? string.Empty;
                 options.ClientSecret = googleOptions?.ClientSecret ?? string.Empty;
                 options.CallbackPath = "/signin-google";
+            })
+            .AddFacebook(options =>
+            {
+                var facebookOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Facebook").Get<FacebookOptions>();
+                options.AppId = facebookOptions?.AppId ?? string.Empty;
+                options.AppSecret = facebookOptions?.AppSecret ?? string.Empty;
+                options.CallbackPath = "/signin-facebook";
             });
 
         builder.Services.AddHttpClient();
@@ -222,6 +232,7 @@ public class Program
         {
             options.WithOrigins(
                 "http://localhost:4200",
+                "https://localhost:4200",
                 "https://localhost:8000",
                 "https://localhost:9000/",
                 "http://97.74.95.95.168",

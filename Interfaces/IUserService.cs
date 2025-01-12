@@ -14,4 +14,5 @@ public interface IUserService
     Task<bool> UpdatePaymentScheduleAsync(string userId, PaymentSchedule paymentSchedule);
     Task<PaymentSchedule?> GetPaymentScheduleAsync(string userId);
     Task UpdateCompensationPercentageAsync(string userId, int newPercentage);
+    Task<SocialLoginResult> HandleSocialLoginAsync(string provider, string token, string? country = null, string? referralToken = null);
 }

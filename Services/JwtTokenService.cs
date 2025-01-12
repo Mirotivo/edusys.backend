@@ -1,6 +1,8 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -17,22 +19,53 @@ public class Meeting
 
 public class JwtTokenService : IJwtTokenService
 {
-    private readonly JitsiOptions _options;
+    private readonly JitsiOptions _jitsiOptions;
+    private readonly JwtOptions _jwtOptions;
+    private readonly UserManager<User> _userManager;
     private readonly ILogger<JwtTokenService> _logger;
 
     public JwtTokenService(
-        IOptions<JitsiOptions> options,
+        IOptions<JitsiOptions> jitsiOptions,
+        IOptions<JwtOptions> jwtOptions,
+        UserManager<User> userManager,
         ILogger<JwtTokenService> logger
     )
     {
-        _options = options.Value;
+        _jitsiOptions = jitsiOptions.Value;
+        _jwtOptions = jwtOptions.Value;
+        _userManager = userManager;
         _logger = logger;
+    }
+
+    public async Task<string> GenerateTokenAsync(User user)
+    {
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.FirstName ?? user.Email ?? string.Empty),
+            new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
+        };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(_jwtOptions.ExpiryDays),
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Convert.FromBase64String(_jwtOptions.Key ?? string.Empty)), SecurityAlgorithms.HmacSha256Signature),
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience
+        );
+
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        return tokenString;
     }
 
     public Meeting GetMeeting(string userName, string roomName)
     {
         // Generate the token
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.AppSecret));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jitsiOptions.AppSecret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var header = new JwtHeader(credentials);
         var expirationTime = DateTime.UtcNow.AddHours(1);
@@ -41,7 +74,7 @@ public class JwtTokenService : IJwtTokenService
         {
             { "context", JsonConvert.SerializeObject(new { user = new { name = userName } }) },
             { "role", "moderator" },
-            { "iss", _options.AppId },
+            { "iss", _jitsiOptions.AppId },
             { "aud", "meet.jitsi.com" },
             { "sub", "meet.jitsi.com" },
             { "room", roomName },
@@ -54,15 +87,15 @@ public class JwtTokenService : IJwtTokenService
         var tokenString = handler.WriteToken(secToken);
 
         // Construct the meeting URL
-        var meetingUrl = $"https://{_options.Domain}/{roomName}?token={tokenString}";
+        var meetingUrl = $"https://{_jitsiOptions.Domain}/{roomName}?token={tokenString}";
 
         // Return the meeting object
         return new Meeting
         {
             Token = tokenString,
             MeetingUrl = meetingUrl,
-            Domain = _options.Domain,
-            ServerUrl = $"https://{_options.Domain}/",
+            Domain = _jitsiOptions.Domain,
+            ServerUrl = $"https://{_jitsiOptions.Domain}/",
             RoomName = roomName,
             UserName = userName
         };

@@ -16,6 +16,7 @@ public class UserService : IUserService
     private readonly AvanciraDbContext _dbContext;
     private readonly INotificationService _notificationService;
     private readonly IFileUploadService _fileUploadService;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly AppOptions _appOptions;
     private readonly JwtOptions _jwtOptions;
     private readonly ILogger<UserService> _logger;
@@ -27,6 +28,7 @@ public class UserService : IUserService
         AvanciraDbContext dbContext,
         INotificationService notificationService,
         IFileUploadService fileUploadService,
+        IJwtTokenService jwtTokenService,
         IOptions<AppOptions> appOptions,
         IOptions<JwtOptions> jwtOptions,
         ILogger<UserService> logger
@@ -38,6 +40,7 @@ public class UserService : IUserService
         _dbContext = dbContext;
         _notificationService = notificationService;
         _fileUploadService = fileUploadService;
+        _jwtTokenService = jwtTokenService;
         _appOptions = appOptions.Value;
         _jwtOptions = jwtOptions.Value;
         _logger = logger;
@@ -63,29 +66,47 @@ public class UserService : IUserService
         await _userManager.AddToRoleAsync(user, Role.Tutor.ToString());
 
         // Handle referral token logic if necessary
-        if (!string.IsNullOrEmpty(model.ReferralToken))
-        {
-            var referrer = await _dbContext.Users.FirstOrDefaultAsync(u => u.RecommendationToken == model.ReferralToken);
-            if (referrer != null)
-            {
-                _dbContext.Referrals.Add(new Referral
-                {
-                    ReferrerId = referrer.Id,
-                    ReferredId = user.Id
-                });
+        await HandleReferralTokenAsync(model.ReferralToken, user.Id);
 
-                _dbContext.Subscriptions.Add(new Subscription
-                {
-                    UserId = referrer.Id,
-                    StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(1),
-                    Amount = 0,
-                    Status = SubscriptionStatus.Active,
-                    Plan = "Premium"
-                });
-            }
+        await AssignCountryAsync(user, country);
+
+        return (true, null);
+    }
+
+    private async Task HandleReferralTokenAsync(string referralToken, string newUserId)
+    {
+        if (string.IsNullOrEmpty(referralToken))
+        {
+            return;
         }
 
+        var referrer = await _dbContext.Users.FirstOrDefaultAsync(u => u.RecommendationToken == referralToken);
+        if (referrer == null)
+        {
+            return;
+        }
+
+        _dbContext.Referrals.Add(new Referral
+        {
+            ReferrerId = referrer.Id,
+            ReferredId = newUserId
+        });
+
+        _dbContext.Subscriptions.Add(new Subscription
+        {
+            UserId = referrer.Id,
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddMonths(1),
+            Amount = 0,
+            Status = SubscriptionStatus.Active,
+            Plan = "Premium"
+        });
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private async Task AssignCountryAsync(User user, string country)
+    {
         // Assign the country to the user
         var countryEntity = await _dbContext.Countries.FirstOrDefaultAsync(c => EF.Functions.Like(c.Name, country));
         if (countryEntity == null)
@@ -95,9 +116,7 @@ public class UserService : IUserService
             await _dbContext.SaveChangesAsync();
         }
         user.CountryId = countryEntity.Id;
-
         await _dbContext.SaveChangesAsync();
-        return (true, null);
     }
 
     public async Task<(string Token, List<string> Roles)?> LoginUser(LoginViewModel model)
@@ -116,24 +135,7 @@ public class UserService : IUserService
 
         var roles = await _userManager.GetRolesAsync(user);
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.FirstName ?? user.Email ?? string.Empty),
-            new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
-        };
-
-        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddDays(_jwtOptions.ExpiryDays),
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Convert.FromBase64String(_jwtOptions.Key ?? string.Empty)), SecurityAlgorithms.HmacSha256Signature),
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience
-        );
-
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenString = await _jwtTokenService.GenerateTokenAsync(user);
         return (tokenString, roles.ToList());
     }
 
@@ -311,6 +313,100 @@ public class UserService : IUserService
         var user = await _userManager.FindByIdAsync(userId);
         return user?.PaymentSchedule;
     }
+
+
+
+    public async Task<SocialLoginResult> HandleSocialLoginAsync(string provider, string token, string? country = null, string? referralToken = null)
+    {
+        SocialUser socialUser;
+
+        // Verify token based on the provider
+        socialUser = provider.ToLower() switch
+        {
+            "google" => await VerifyGoogleToken(token),
+            "facebook" => await VerifyFacebookToken(token),
+            _ => throw new Exception("Invalid provider")
+        };
+
+        // Find or create user in the system
+        var user = await _userManager.FindByEmailAsync(socialUser.Email);
+        if (user == null)
+        {
+            user = new User
+            {
+                UserName = socialUser.Email,
+                Email = socialUser.Email
+            };
+
+            var result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Failed to create user.");
+            }
+
+            // Assign default role (e.g., "Tutor")
+            await _userManager.AddToRoleAsync(user, Role.Tutor.ToString());
+
+            // Handle referral token logic if necessary
+            await HandleReferralTokenAsync(referralToken, user.Id);
+
+            await AssignCountryAsync(user, country);
+        }
+
+        // Generate a JWT token
+        var tokenResult = await _jwtTokenService.GenerateTokenAsync(user);
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new SocialLoginResult
+        {
+            Token = tokenResult,
+            Roles = roles.ToList()
+        };
+    }
+
+    private async Task<SocialUser> VerifyGoogleToken(string token)
+    {
+        using var client = new HttpClient();
+        var response = await client.GetAsync($"https://oauth2.googleapis.com/tokeninfo?id_token={token}");
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<GoogleUserPayload>();
+        if (payload == null || string.IsNullOrEmpty(payload.Email))
+        {
+            throw new Exception("Invalid Google token");
+        }
+
+        return new SocialUser
+        {
+            Email = payload.Email,
+            Name = payload.Name,
+            Picture = payload.Picture,
+            Provider = "Google"
+        };
+    }
+
+    private async Task<SocialUser> VerifyFacebookToken(string token)
+    {
+        using var client = new HttpClient();
+        var response = await client.GetAsync($"https://graph.facebook.com/me?fields=id,email,name,picture&access_token={token}");
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<FacebookUserPayload>();
+        if (payload == null || string.IsNullOrEmpty(payload.Email))
+        {
+            throw new Exception("Invalid Facebook token");
+        }
+
+        return new SocialUser
+        {
+            Email = payload.Email,
+            Name = payload.Name,
+            Picture = payload.Picture?.Data?.Url,
+            Provider = "Facebook"
+        };
+    }
+
+
 
     private UserDto MapToUserDto(User user, int? lessonsCompleted = null, int? evaluations = null, bool? paymentDetailsAvailable = null)
     {

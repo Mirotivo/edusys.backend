@@ -1,4 +1,5 @@
 public interface IJwtTokenService
 {
+    Task<string> GenerateTokenAsync(User user);
     Meeting GetMeeting(string userName, string roomName);
 }

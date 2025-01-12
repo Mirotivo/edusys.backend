@@ -17,3 +17,46 @@ public class LoginViewModel
     }
 
 }
+public class SocialLoginRequest
+{
+    [Required]
+    public string Provider { get; set; } = string.Empty;
+
+    [Required]
+    public string Token { get; set; } = string.Empty;
+}
+public class SocialUser
+{
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Picture { get; set; } = string.Empty;
+    public string Provider { get; set; } = string.Empty;
+}
+public class GoogleUserPayload
+{
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Picture { get; set; } = string.Empty;
+}
+public class FacebookUserPayload
+{
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public FacebookPicture Picture { get; set; }
+}
+
+public class FacebookPicture
+{
+    public FacebookPictureData Data { get; set; } = string.Empty;
+}
+
+public class FacebookPictureData
+{
+    public string Url { get; set; } = string.Empty;
+}
+
+public class SocialLoginResult
+{
+    public string Token { get; set; } = string.Empty;
+    public List<string> Roles { get; set; }
+}

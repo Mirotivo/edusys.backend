@@ -51,6 +51,34 @@ public class UsersAPIController : BaseController
         return JsonOk(new { token = result.Value.Token, roles = result.Value.Roles });
     }
 
+    [HttpPost("social-login")]
+    public async Task<IActionResult> SocialLogin([FromBody] SocialLoginRequest request)
+    {
+        var country = HttpContext.Items["Country"]?.ToString() ?? "AU";
+
+        if (string.IsNullOrEmpty(request.Provider) || string.IsNullOrEmpty(request.Token))
+        {
+            return BadRequest(new { Message = "Provider and Token are required." });
+        }
+
+        try
+        {
+            // Delegate social login handling to the service layer
+            var result = await _userService.HandleSocialLoginAsync(request.Provider, request.Token, country);
+
+            if (result == null)
+            {
+                return Unauthorized(new { Message = "Social login failed." });
+            }
+
+            return Ok(new { token = result.Token, roles = result.Roles });
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(new { Message = ex.Message });
+        }
+    }
+
     [HttpPost("request-reset-password")]
     public async Task<IActionResult> RequestPasswordReset([FromBody] ResetPasswordRequestDto model)
     {
