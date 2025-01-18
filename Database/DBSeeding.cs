@@ -302,6 +302,86 @@ public class ListingSeeder
                     AboutYou = "My name is Amr, and I’m a software engineer with expertise in Python for data science and AI.",
                     AboutLesson = "Lessons include Python basics, libraries like NumPy and Pandas, and practical data science projects.",
                 },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Maths"))?.Id ?? 0,
+                    Rates = new ListingRates() { Hourly = 40.0M, FiveHours = 40.0M * 5, TenHours = 40.0M * 10 },
+                    Title = "Mathematics Tutoring for All Levels",
+                    Description = "Enhance your math skills with personalized lessons in algebra, calculus, and geometry for all levels.",
+                    ListingImagePath = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set6",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I’m passionate about teaching mathematics to help students achieve their academic goals.",
+                    AboutLesson = "Lessons cover fundamental to advanced mathematical concepts with real-world problem-solving techniques.",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Java"))?.Id ?? 0,
+                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    Title = "Java Programming Essentials",
+                    Description = "Learn Java programming from basics to advanced, focusing on object-oriented programming and real-world applications.",
+                    ListingImagePath = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set3",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I have experience teaching Java to professionals and students alike.",
+                    AboutLesson = "Lessons cover Java syntax, OOP concepts, and building Java-based applications.",
+                },
+                // Frontend Development - Angular
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
+                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    Title = "Frontend Development with Angular",
+                    Description = "Learn how to build responsive web applications using Angular.",
+                    ListingImagePath = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set2",
+                    Locations = LocationType.Webcam | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I specialize in frontend development using modern frameworks like Angular.",
+                    AboutLesson = "Lessons include TypeScript basics, Angular component architecture, and building real-world applications.",
+                },
+
+                // Frontend Development - React
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
+                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    Title = "Frontend Development with React",
+                    Description = "Learn how to create dynamic and interactive web applications using React.",
+                    ListingImagePath = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set3",
+                    Locations = LocationType.Webcam | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I have extensive experience in building scalable React applications.",
+                    AboutLesson = "Lessons include React basics, state management with Redux, and deploying React apps.",
+                },
+
+                // Backend Development - .NET
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
+                    Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
+                    Title = "Backend Development with .NET",
+                    Description = "Master backend development using .NET and build robust APIs.",
+                    ListingImagePath = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set4",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I have deep expertise in .NET for backend development.",
+                    AboutLesson = "Lessons include .NET Core basics, RESTful API design, and database integration with Entity Framework.",
+                },
+
+                // Backend Development - Advanced .NET
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
+                    Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
+                    Title = "Advanced Backend Development with .NET",
+                    Description = "Dive deeper into advanced .NET features and build enterprise-grade applications.",
+                    ListingImagePath = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set5",
+                    Locations = LocationType.Webcam | LocationType.TutorLocation,
+                    AboutYou = "I’m Amr, and I have years of experience building enterprise solutions using .NET technologies.",
+                    AboutLesson = "Lessons cover advanced .NET topics like dependency injection, authentication, and microservices architecture.",
+                },
+
             };
 
             context.Listings.AddRange(listings);
