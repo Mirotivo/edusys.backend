@@ -22,7 +22,7 @@ public class LessonCategoryService : ILessonCategoryService
         return _dbContext.LessonCategories
             .AsEnumerable()
             .OrderBy(_ => Guid.NewGuid()) // Randomize the order
-            .Take(10) // Limit to 10 random listings (optional)
+            .Take(12) // Limit to 10 random listings (optional)
             .ToList();
     }
 
