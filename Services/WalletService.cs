@@ -3,43 +3,40 @@ using Microsoft.EntityFrameworkCore;
 public class WalletService : IWalletService
 {
     private readonly AvanciraDbContext _dbContext;
-    private readonly IPaymentService _paymentService;
     private readonly ILogger<WalletService> _logger;
 
     public WalletService(
         AvanciraDbContext dbContext,
-        IPaymentService paymentService,
         ILogger<WalletService> logger
     )
     {
         _dbContext = dbContext;
-        _paymentService = paymentService;
         _logger = logger;
     }
 
-    public async Task<(string PaymentId, string ApprovalUrl, int TransactionId)> AddMoneyToWallet(string userId, PaymentRequestDto request)
-    {
-        var user = await _dbContext.Users.FindAsync(userId);
-        if (user == null) throw new KeyNotFoundException("User not found.");
+    //public async Task<(string PaymentId, string ApprovalUrl, int TransactionId)> AddMoneyToWallet(string userId, PaymentRequestDto request)
+    //{
+    //    var user = await _dbContext.Users.FindAsync(userId);
+    //    if (user == null) throw new KeyNotFoundException("User not found.");
 
-        if (request.Amount <= 0)
-            throw new ArgumentException("Amount must be greater than zero.");
+    //    if (request.Amount <= 0)
+    //        throw new ArgumentException("Amount must be greater than zero.");
 
-        if (string.IsNullOrEmpty(user.StripeCustomerId))
-            throw new ArgumentException("Stripe Customer ID is missing for the user.");
+    //    if (string.IsNullOrEmpty(user.StripeCustomerId))
+    //        throw new ArgumentException("Stripe Customer ID is missing for the user.");
 
-        // Use PaymentService to process transaction
-        var transaction = await _paymentService.ProcessTransactionAsync(
-            stripeCustomerId: user.StripeCustomerId,
-            senderId: userId,
-            recipientId: null, // Platform
-            amount: request.Amount,
-            paymentType: PaymentType.WalletTopUp,
-            gatewayName: request.Gateway
-        );
+    //    // Use PaymentService to process transaction
+    //    var transaction = await _paymentService.ProcessTransactionAsync(
+    //        stripeCustomerId: user.StripeCustomerId,
+    //        senderId: userId,
+    //        recipientId: null, // Platform
+    //        amount: request.Amount,
+    //        paymentType: PaymentType.WalletTopUp,
+    //        gatewayName: request.Gateway
+    //    );
 
-        return (transaction?.PaymentId ?? string.Empty, request.ReturnUrl, transaction?.Id ?? 0);
-    }
+    //    return (transaction?.PaymentId ?? string.Empty, request.ReturnUrl, transaction?.Id ?? 0);
+    //}
 
     public async Task<(decimal Balance, DateTime LastUpdated)> GetWalletBalance(string userId)
     {
@@ -49,4 +46,51 @@ public class WalletService : IWalletService
 
         return (wallet.Balance, wallet.UpdatedAt);
     }
+
+    public async Task UpdateWalletBalance(string userId, decimal amount, string reason)
+    {
+        var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+
+        if (wallet != null)
+        {
+            wallet.Balance += amount;
+            wallet.UpdatedAt = DateTime.UtcNow;
+
+            // Log the wallet update
+            _dbContext.Add(new WalletLog
+            {
+                WalletId = wallet.Id,
+                AmountChanged = amount,
+                NewBalance = wallet.Balance,
+                Reason = reason,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            _dbContext.Wallets.Update(wallet);
+        }
+        else
+        {
+            wallet = new Wallet
+            {
+                UserId = userId,
+                Balance = amount,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _dbContext.Wallets.AddAsync(wallet);
+            await _dbContext.SaveChangesAsync();
+
+            // Log the wallet creation
+            _dbContext.Add(new WalletLog
+            {
+                WalletId = wallet.Id,
+                AmountChanged = amount,
+                NewBalance = wallet.Balance,
+                Reason = $"Wallet created with initial balance: {amount:C}"
+            });
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
 }

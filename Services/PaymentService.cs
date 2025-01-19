@@ -11,6 +11,7 @@ public class PaymentService : IPaymentService
     const decimal platformFeeRate = 0.1m;
     private readonly AvanciraDbContext _dbContext;
     private readonly IStripeCardService _cardService;
+    private readonly IWalletService _walletService;
     private readonly IPaymentGatewayFactory _paymentGatewayFactory;
     private readonly AppOptions _appOptions;
     private readonly StripeOptions _stripeOptions;
@@ -20,6 +21,7 @@ public class PaymentService : IPaymentService
     public PaymentService(
         AvanciraDbContext dbContext,
         IStripeCardService cardService,
+        IWalletService walletService,
         IPaymentGatewayFactory paymentGatewayFactory,
         IOptions<AppOptions> appOptions,
         IOptions<StripeOptions> stripeOptions,
@@ -29,6 +31,7 @@ public class PaymentService : IPaymentService
     {
         _dbContext = dbContext;
         _cardService = cardService;
+        _walletService = walletService;
         _paymentGatewayFactory = paymentGatewayFactory;
         _appOptions = appOptions.Value;
         _stripeOptions = stripeOptions.Value;
@@ -116,72 +119,82 @@ public class PaymentService : IPaymentService
 
     public async Task<Transaction> ProcessTransactionAsync(string stripeCustomerId, string senderId, string? recipientId, decimal amount, PaymentType paymentType, string gatewayName = "Stripe")
     {
-        var platformFee = amount * platformFeeRate;
-        var netAmount = amount - platformFee;
+        using var transactionScope = await _dbContext.Database.BeginTransactionAsync();
 
-        // Create a transaction
-        var transaction = new Transaction
+        try
         {
-            SenderId = senderId,
-            RecipientId = recipientId,
-            Amount = netAmount,
-            PlatformFee = platformFee,
-            TransactionDate = DateTime.UtcNow,
-            PaymentType = paymentType,
-            PaymentMethod = PaymentMethod.Card,
-            Status = TransactionStatus.Pending
-        };
+            var platformFee = amount * platformFeeRate;
+            var netAmount = amount - platformFee;
 
-        await _dbContext.Transactions.AddAsync(transaction);
-        await _dbContext.SaveChangesAsync();
+            // Step 1: Process the payment with the gateway
+            var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
+            var paymentResult = await gateway.ProcessPayment(stripeCustomerId, amount, $"Payment from account: {stripeCustomerId}");
 
-        // Process the payment
-        var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
-        var paymentResult = await gateway.ProcessPayment(stripeCustomerId, transaction);
 
-        if (paymentResult.Status == PaymentResultStatus.Completed)
-        {
-            transaction.Status = TransactionStatus.Completed;
-            transaction.PaymentId = paymentResult.PaymentId;
+            if (paymentResult.Status != PaymentResultStatus.Completed)
+            {
+                throw new Exception("Payment processing failed.");
+            }
 
-            // Update recipient's wallet
+            // Step 2: Create the transaction record
+            var transaction = new Transaction
+            {
+                SenderId = senderId,
+                RecipientId = recipientId,
+                Amount = netAmount,
+                PlatformFee = platformFee,
+                TransactionDate = DateTime.UtcNow,
+                PaymentType = paymentType,
+                PaymentMethod = PaymentMethod.Card,
+                Status = TransactionStatus.Completed,
+                PaymentId = paymentResult.PaymentId
+            };
+
+            await _dbContext.Transactions.AddAsync(transaction);
+            await _dbContext.SaveChangesAsync();
+
+            // Step 3: Update recipient's wallet balance
             if (!string.IsNullOrEmpty(recipientId))
             {
-                await UpdateWalletBalance(recipientId, netAmount, $"Payment for transaction {transaction.Id}");
+                await _walletService.UpdateWalletBalance(recipientId, netAmount, $"Payment for transaction {transaction.Id}");
             }
-        }
-        else
-        {
-            transaction.Status = TransactionStatus.Failed;
-            throw new Exception("Payment processing failed.");
-        }
 
-        await _dbContext.SaveChangesAsync();
-        return transaction;
+            // Commit the transaction
+            await transactionScope.CommitAsync();
+
+            return transaction;
+        }
+        catch
+        {
+            // Rollback in case of any failure
+            await transactionScope.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<bool> RefundPaymentAsync(int transactionId, decimal refundAmount, decimal retainedAmount, string gatewayName = "Stripe")
     {
-        // Retrieve the transaction associated with the payment ID
-        var transaction = await _dbContext.Transactions
-            .FirstOrDefaultAsync(t => t.Id == transactionId);
-        if (transaction == null)
-        {
-            throw new KeyNotFoundException("Transaction not found for the given Payment ID.");
-        }
-
-        // Fetch PaymentId from the Transaction
-        var paymentId = transaction?.PaymentId;
-        if (string.IsNullOrEmpty(paymentId))
-        {
-            throw new InvalidOperationException("Payment ID not found for this lesson.");
-        }
-
-        var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
-
+        using var transactionScope = await _dbContext.Database.BeginTransactionAsync();
 
         try
         {
+            // Retrieve the transaction associated with the payment ID
+            var transaction = await _dbContext.Transactions
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
+            if (transaction == null)
+            {
+                throw new KeyNotFoundException("Transaction not found for the given Payment ID.");
+            }
+
+            // Fetch PaymentId from the Transaction
+            var paymentId = transaction?.PaymentId;
+            if (string.IsNullOrEmpty(paymentId))
+            {
+                throw new InvalidOperationException("Payment ID not found for this transaction.");
+            }
+
+            var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
+
             // Perform the refund through the payment gateway
             await gateway.RefundPayment(paymentId, refundAmount);
 
@@ -196,94 +209,108 @@ public class PaymentService : IPaymentService
             {
                 var recipientId = transaction.RecipientId;
                 var refundNetAmount = refundAmount * (transaction.Amount / (transaction.Amount + transaction.PlatformFee));
-                await UpdateWalletBalance(recipientId, -refundNetAmount, $"Refund for transaction {transactionId}");
+                await _walletService.UpdateWalletBalance(recipientId, -refundNetAmount, $"Refund for transaction {transactionId}");
             }
 
             await _dbContext.SaveChangesAsync();
+
+            // Commit the transaction
+            await transactionScope.CommitAsync();
 
             _logger.LogInformation($"Refund of {refundAmount:C} processed for transaction {transaction.Id}.");
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Refund failed for transaction {transaction.Id}: {ex.Message}");
+            // Rollback in case of any failure
+            await transactionScope.RollbackAsync();
+
+            _logger.LogError($"Refund failed for transaction {transactionId}: {ex.Message}");
             throw new Exception($"Refund failed: {ex.Message}");
         }
     }
 
     public async Task<string> CreatePayoutAsync(string userId, decimal amount, string currency)
     {
-        // Step 1: Fetch the user's wallet
-        var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
-
-        if (wallet == null)
-        {
-            _logger.LogWarning($"Wallet for User with ID {userId} not found.");
-            throw new InvalidOperationException("Wallet not found.");
-        }
-
-        // Step 2: Check if the wallet has sufficient funds
-        if (wallet.Balance < amount)
-        {
-            _logger.LogWarning($"Insufficient balance for User ID {userId}. Requested: {amount}, Available: {wallet.Balance}");
-            throw new InvalidOperationException("Insufficient wallet balance for payout.");
-        }
-
-        // Step 3: Proceed with payout using the payment gateway
-        var gateway = _paymentGatewayFactory.GetPaymentGateway("Stripe");
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
+        var user = await _dbContext.Users.FindAsync(userId);
         if (user == null)
-        {
-            _logger.LogWarning($"User with ID {userId} not found.");
             throw new KeyNotFoundException("User not found.");
-        }
 
-        string payoutResult;
+        using var transactionScope = await _dbContext.Database.BeginTransactionAsync();
+
         try
         {
-            payoutResult = await gateway.CreatePayoutAsync(user.Email, amount, currency);
+            // Step 1: Fetch the user's wallet to validate balance
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
 
-            // Step 4: Deduct the payout amount from the wallet
-            wallet.Balance -= amount;
-            wallet.UpdatedAt = DateTime.UtcNow;
-
-            // Log the wallet update
-            _dbContext.Add(new WalletLog
+            if (wallet == null)
             {
-                WalletId = wallet.Id,
-                AmountChanged = -amount,
-                NewBalance = wallet.Balance,
-                Reason = $"Payout of {amount:C} processed successfully.",
-                CreatedAt = DateTime.UtcNow
-            });
+                _logger.LogWarning($"Wallet for User with ID {userId} not found.");
+                throw new InvalidOperationException("Wallet not found.");
+            }
 
-            _dbContext.Wallets.Update(wallet);
-            await _dbContext.SaveChangesAsync();
+            // Step 2: Check if the wallet has sufficient funds
+            if (wallet.Balance < amount)
+            {
+                _logger.LogWarning($"Insufficient balance for User ID {userId}. Requested: {amount}, Available: {wallet.Balance}");
+                throw new InvalidOperationException("Insufficient wallet balance for payout.");
+            }
+
+            // Step 3: Proceed with payout using the payment gateway
+            var gateway = _paymentGatewayFactory.GetPaymentGateway("Stripe");
+            var payoutResult = await gateway.CreatePayoutAsync(user.StripeCustomerId, amount, currency);
+
+            // Step 4: Use _walletService to update the wallet balance
+            await _walletService.UpdateWalletBalance(
+                userId,
+                -amount,
+                $"Payout of {amount:C} processed successfully."
+            );
+
+            // Commit the transaction
+            await transactionScope.CommitAsync();
 
             _logger.LogInformation($"Payout of {amount:C} successfully processed for User ID {userId}.");
 
-            // Step 5: Notify the user about the payout
+            // Notify the user about the successful payout
             await _notificationService.NotifyAsync(
-                userId.ToString(),
+                userId,
                 NotificationEvent.PayoutProcessed,
                 $"Your payout of {amount:C} has been successfully processed.",
                 new
                 {
                     Amount = amount,
                     Currency = currency,
-                    WalletBalance = wallet.Balance,
+                    WalletBalance = wallet.Balance - amount,
                     ProcessedAt = DateTime.UtcNow
                 }
             );
+
+            return payoutResult;
         }
         catch (Exception ex)
         {
+            // Rollback in case of any failure
+            await transactionScope.RollbackAsync();
+
             _logger.LogError(ex, $"Failed to process payout for User ID {userId}.");
+
+            // Notify the user about the failed payout
+            await _notificationService.NotifyAsync(
+                userId,
+                NotificationEvent.PaymentFailed,
+                $"Your payout of {amount:C} failed to process. Please try again.",
+                new
+                {
+                    Amount = amount,
+                    Currency = currency,
+                    ErrorMessage = ex.Message,
+                    AttemptedAt = DateTime.UtcNow
+                }
+            );
+
             throw new Exception("Payout processing failed. Please try again.");
         }
-
-        return payoutResult;
     }
 
 
@@ -412,53 +439,6 @@ public class PaymentService : IPaymentService
     }
 
 
-    private async Task UpdateWalletBalance(string userId, decimal amount, string reason)
-    {
-        var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
-
-        if (wallet != null)
-        {
-            wallet.Balance += amount;
-            wallet.UpdatedAt = DateTime.UtcNow;
-
-            // Log the wallet update
-            _dbContext.Add(new WalletLog
-            {
-                WalletId = wallet.Id,
-                AmountChanged = amount,
-                NewBalance = wallet.Balance,
-                Reason = reason,
-                CreatedAt = DateTime.UtcNow
-            });
-
-            _dbContext.Wallets.Update(wallet);
-        }
-        else
-        {
-            wallet = new Wallet
-            {
-                UserId = userId,
-                Balance = amount,
-                UpdatedAt = DateTime.UtcNow
-            };
-
-            await _dbContext.Wallets.AddAsync(wallet);
-            await _dbContext.SaveChangesAsync();
-
-            // Log the wallet creation
-            _dbContext.Add(new WalletLog
-            {
-                WalletId = wallet.Id,
-                AmountChanged = amount,
-                NewBalance = wallet.Balance,
-                Reason = $"Wallet created with initial balance: {amount:C}"
-            });
-        }
-
-        await _dbContext.SaveChangesAsync();
-    }
-
-
 
 
 
@@ -496,15 +476,5 @@ public class PaymentService : IPaymentService
         await _dbContext.SaveChangesAsync();
 
         return accountId;
-    }
-
-    public async Task<string> CreatePayoutAsync(string userId, long amount, string currency)
-    {
-        var user = await _dbContext.Users.FindAsync(userId);
-        if (user == null)
-            throw new KeyNotFoundException("User not found.");
-
-        var gateway = _paymentGatewayFactory.GetPaymentGateway("Stripe");
-        return await gateway.CreatePayoutAsync(user.StripeCustomerId, amount, currency);
     }
 }

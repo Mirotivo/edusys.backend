@@ -19,5 +19,4 @@ public interface IPaymentService
 
     Task<string> CreateAccountLinkAsync(string accountId);
     Task<string> CreateStripeAccountAsync(string userId);
-    Task<string> CreatePayoutAsync(string accountId, long amount, string currency);
 }

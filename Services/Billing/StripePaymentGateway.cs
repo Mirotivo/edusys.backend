@@ -92,7 +92,7 @@ public class StripePaymentGateway : IPaymentGateway
         }
     }
 
-    public async Task<PaymentResult> ProcessPayment(string stripeCustomerId, Transaction transaction)
+    public async Task<PaymentResult> ProcessPayment(string stripeCustomerId, decimal amount, string description)
     {
         try
         {
@@ -100,10 +100,10 @@ public class StripePaymentGateway : IPaymentGateway
 
             var options = new ChargeCreateOptions
             {
-                Amount = (long)((transaction.Amount + transaction.PlatformFee) * 100),
+                Amount = (long)(amount * 100),
                 Currency = "AUD",
                 Customer = stripeCustomerId,
-                Description = $"Payment for Lesson ID {transaction.Id}",
+                Description = description,
             };
 
             var service = new ChargeService();
@@ -111,7 +111,7 @@ public class StripePaymentGateway : IPaymentGateway
 
             if (charge.Status == "succeeded")
             {
-                _logger.LogInformation("Stripe payment succeeded. Charge ID: {ChargeId} for Transaction ID: {TransactionId}", charge.Id, transaction.Id);
+                _logger.LogInformation("Stripe payment succeeded. Charge ID: {ChargeId} for Transaction ID: {TransactionId}", charge.Id);
                 return new PaymentResult
                 {
                     PaymentId = charge.Id, // Payment ID from Stripe
@@ -121,7 +121,7 @@ public class StripePaymentGateway : IPaymentGateway
             }
             else
             {
-                _logger.LogWarning("Stripe payment failed. Charge ID: {ChargeId} for Transaction ID: {TransactionId}", charge.Id, transaction.Id);
+                _logger.LogWarning("Stripe payment failed. Charge ID: {ChargeId} for Transaction ID: {TransactionId}", charge.Id);
                 // Handle other statuses gracefully
                 return new PaymentResult
                 {
@@ -134,7 +134,7 @@ public class StripePaymentGateway : IPaymentGateway
         catch (Exception ex)
         {
             // Log error
-            _logger.LogError(ex, "Stripe payment processing failed for Transaction ID: {TransactionId}", transaction.Id);
+            _logger.LogError(ex, "Stripe payment processing failed for Transaction ID: {TransactionId}");
 
             // Return a failed result for consistency
             return new PaymentResult
@@ -146,7 +146,7 @@ public class StripePaymentGateway : IPaymentGateway
         }
     }
 
-    public async Task<Transfer> TransferFundsToUserAsync(string stripeCustomerId, decimal amount, string currency)
+    private async Task<Transfer> TransferFundsToUserAsync(string stripeCustomerId, decimal amount, string currency)
     {
         StripeConfiguration.ApiKey = _stripeOptions.ApiKey;
 

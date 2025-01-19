@@ -21,6 +21,23 @@ public class PaymentsAPIController : BaseController
         _paymentService = paymentService;
     }
 
+    //[Authorize]
+    //[HttpPost("add-money")]
+    //public async Task<IActionResult> AddMoneyToWallet([FromBody] PaymentRequestDto request)
+    //{
+    //    var userId = GetUserId();
+
+    //    try
+    //    {
+    //        var result = await _walletService.AddMoneyToWallet(userId, request);
+    //        return JsonOk(new { result.PaymentId, result.ApprovalUrl, result.TransactionId });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return JsonError("Failed to process payment.", ex.Message);
+    //    }
+    //}
+
     [HttpPost("create-payment")]
     public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDto request)
     {

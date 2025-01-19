@@ -107,7 +107,7 @@ public class PayPalPaymentGateway : IPaymentGateway
         throw new NotImplementedException("RefundPayment method is not implemented for PayPal.");
     }
 
-    public async Task<PaymentResult> ProcessPayment(string stripeCustomerId, Transaction transaction)
+    public async Task<PaymentResult> ProcessPayment(string stripeCustomerId, decimal amount, string description)
     {
         await Task.Delay(0);
         throw new NotImplementedException();
