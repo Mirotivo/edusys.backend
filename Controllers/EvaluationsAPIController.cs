@@ -55,7 +55,7 @@ public class EvaluationsAPIController : BaseController
         {
             return JsonError("Review data is required.");
         }
-        if (!string.IsNullOrEmpty(reviewDto.RevieweeId) || string.IsNullOrWhiteSpace(reviewDto.Subject) || string.IsNullOrWhiteSpace(reviewDto.Feedback))
+        if (string.IsNullOrEmpty(reviewDto.RevieweeId) || string.IsNullOrWhiteSpace(reviewDto.Subject) || string.IsNullOrWhiteSpace(reviewDto.Feedback))
         {
             return JsonError("Invalid review details.");
         }
