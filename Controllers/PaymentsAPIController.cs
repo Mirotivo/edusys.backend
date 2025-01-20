@@ -128,11 +128,7 @@ public class PaymentsAPIController : BaseController
     {
         var userId = GetUserId();
 
-        // Step 1: Create a new Stripe connected account
-        var accountId = await _paymentService.CreateStripeAccountAsync(userId);
-
-        // Step 2: Generate the account onboarding link
-        var url = await _paymentService.CreateAccountLinkAsync(accountId);
+        var url = await _paymentService.CreateAccountLinkAsync(userId);
 
         return Ok(new { url });
     }

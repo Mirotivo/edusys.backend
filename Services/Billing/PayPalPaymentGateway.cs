@@ -188,4 +188,9 @@ public class PayPalPaymentGateway : IPaymentGateway
     {
         throw new NotImplementedException();
     }
+
+    public Task<string> CreateAccountLinkAsync(string userId)
+    {
+        throw new NotImplementedException();
+    }
 }

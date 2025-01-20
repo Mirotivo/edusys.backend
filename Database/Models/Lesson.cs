@@ -7,7 +7,8 @@ public enum LessonStatus
     Proposed,
     Booked,
     Completed,
-    Canceled
+    Canceled,
+    Paid
 }
 
 public class Lesson : ICreatable, IUpdatable

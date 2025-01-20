@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -5,14 +6,17 @@ using Stripe.Checkout;
 
 public class StripePaymentGateway : IPaymentGateway
 {
+    private readonly AppOptions _appOptions;
     private readonly StripeOptions _stripeOptions;
     private readonly ILogger<StripePaymentGateway> _logger;
 
     public StripePaymentGateway(
+        IOptions<AppOptions> appOptions,
         IOptions<StripeOptions> stripeOptions,
         ILogger<StripePaymentGateway> logger
     )
     {
+        _appOptions = appOptions.Value;
         _stripeOptions = stripeOptions.Value;
         _logger = logger;
     }
@@ -111,7 +115,7 @@ public class StripePaymentGateway : IPaymentGateway
 
             if (charge.Status == "succeeded")
             {
-                _logger.LogInformation("Stripe payment succeeded. Charge ID: {ChargeId} for Transaction ID: {TransactionId}", charge.Id);
+                _logger.LogInformation("Stripe payment succeeded. Charge ID: {ChargeId}", charge.Id);
                 return new PaymentResult
                 {
                     PaymentId = charge.Id, // Payment ID from Stripe
@@ -121,7 +125,7 @@ public class StripePaymentGateway : IPaymentGateway
             }
             else
             {
-                _logger.LogWarning("Stripe payment failed. Charge ID: {ChargeId} for Transaction ID: {TransactionId}", charge.Id);
+                _logger.LogWarning("Stripe payment failed. Charge ID: {ChargeId}", charge.Id);
                 // Handle other statuses gracefully
                 return new PaymentResult
                 {
@@ -134,7 +138,7 @@ public class StripePaymentGateway : IPaymentGateway
         catch (Exception ex)
         {
             // Log error
-            _logger.LogError(ex, "Stripe payment processing failed for Transaction ID: {TransactionId}");
+            _logger.LogError(ex, "Stripe payment processing failed");
 
             // Return a failed result for consistency
             return new PaymentResult
@@ -224,4 +228,20 @@ public class StripePaymentGateway : IPaymentGateway
         return account.Id;
     }
 
+    public async Task<string> CreateAccountLinkAsync(string accountId)
+    {
+        StripeConfiguration.ApiKey = _stripeOptions.ApiKey;
+
+        var options = new AccountLinkCreateOptions
+        {
+            Account = accountId,
+            RefreshUrl = $"{_appOptions.FrontEndUrl}/profile?section=payments&detail=receiving",
+            ReturnUrl = $"{_appOptions.FrontEndUrl}/profile?section=payments&detail=receiving",
+            Type = "account_onboarding",
+        };
+        var service = new AccountLinkService();
+        var link = await service.CreateAsync(options);
+        return link.Url;
+
+    }
 }

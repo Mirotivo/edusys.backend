@@ -39,18 +39,6 @@ public class PaymentService : IPaymentService
         _notificationService = notificationService;
     }
 
-    public async Task<PaymentResult> CreatePaymentAsync(PaymentRequestDto request)
-    {
-        var gateway = _paymentGatewayFactory.GetPaymentGateway(request.Gateway);
-        return await gateway.CreatePayment(request.Amount, request.Currency, request.ReturnUrl, request.CancelUrl);
-    }
-
-    public async Task<bool> CapturePaymentAsync(CapturePaymentRequestDto request)
-    {
-        var gateway = _paymentGatewayFactory.GetPaymentGateway(request.Gateway);
-        return await gateway.CapturePayment(request.PaymentId);
-    }
-
     public async Task<PaymentHistoryDto> GetPaymentHistoryAsync(string userId)
     {
         // Fetch all relevant transactions involving the user
@@ -117,24 +105,39 @@ public class PaymentService : IPaymentService
     }
 
 
+    public async Task<PaymentResult> CreatePaymentAsync(PaymentRequestDto request)
+    {
+        var gateway = _paymentGatewayFactory.GetPaymentGateway(request.Gateway);
+        return await gateway.CreatePayment(request.Amount, request.Currency, request.ReturnUrl, request.CancelUrl);
+    }
+
+    public async Task<bool> CapturePaymentAsync(CapturePaymentRequestDto request)
+    {
+        var gateway = _paymentGatewayFactory.GetPaymentGateway(request.Gateway);
+        return await gateway.CapturePayment(request.PaymentId);
+    }
+
     public async Task<Transaction> ProcessTransactionAsync(string stripeCustomerId, string senderId, string? recipientId, decimal amount, PaymentType paymentType, string gatewayName = "Stripe")
     {
         using var transactionScope = await _dbContext.Database.BeginTransactionAsync();
 
+        var paymentId = string.Empty;
         try
         {
             var platformFee = amount * platformFeeRate;
             var netAmount = amount - platformFee;
+            var paymentDescription = recipientId == null
+                ? $"Subscription payment from Sender: {senderId} to Platform"
+                : $"Payment from Sender: {senderId} to Recipient: {recipientId}";
 
             // Step 1: Process the payment with the gateway
             var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
-            var paymentResult = await gateway.ProcessPayment(stripeCustomerId, amount, $"Payment from account: {stripeCustomerId}");
-
-
+            var paymentResult = await gateway.ProcessPayment(stripeCustomerId, amount, paymentDescription);
             if (paymentResult.Status != PaymentResultStatus.Completed)
             {
                 throw new Exception("Payment processing failed.");
             }
+            paymentId = paymentResult.PaymentId;
 
             // Step 2: Create the transaction record
             var transaction = new Transaction
@@ -168,6 +171,12 @@ public class PaymentService : IPaymentService
         {
             // Rollback in case of any failure
             await transactionScope.RollbackAsync();
+            if (!string.IsNullOrEmpty(paymentId))
+            {
+                var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
+                await gateway.RefundPayment(paymentId, amount);
+                _logger.LogInformation($"Payment {paymentId} successfully refunded after failure.");
+            }
             throw;
         }
     }
@@ -230,7 +239,23 @@ public class PaymentService : IPaymentService
         }
     }
 
-    public async Task<string> CreatePayoutAsync(string userId, decimal amount, string currency)
+    public async Task<string> CreateAccountLinkAsync(string userId, string gatewayName = "Stripe")
+    {
+        var user = await _dbContext.Users.FindAsync(userId);
+        if (user == null)
+            throw new KeyNotFoundException("User not found.");
+
+        var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
+        var accountId = await gateway.CreateStripeAccountAsync(user.Email);
+
+        // Save the Account ID (account.Id) in your database
+        user.StripeCustomerId = accountId;
+        await _dbContext.SaveChangesAsync();
+
+        return await gateway.CreateAccountLinkAsync(accountId);
+    }
+
+    public async Task<string> CreatePayoutAsync(string userId, decimal amount, string currency, string gatewayName = "Stripe")
     {
         var user = await _dbContext.Users.FindAsync(userId);
         if (user == null)
@@ -257,7 +282,7 @@ public class PaymentService : IPaymentService
             }
 
             // Step 3: Proceed with payout using the payment gateway
-            var gateway = _paymentGatewayFactory.GetPaymentGateway("Stripe");
+            var gateway = _paymentGatewayFactory.GetPaymentGateway(gatewayName);
             var payoutResult = await gateway.CreatePayoutAsync(user.StripeCustomerId, amount, currency);
 
             // Step 4: Use _walletService to update the wallet balance
@@ -423,58 +448,28 @@ public class PaymentService : IPaymentService
         foreach (var lesson in pastBookedLessons)
         {
             lesson.Status = LessonStatus.Completed;
-            var tutor = lesson.Listing.User;
-            if (tutor.PaymentSchedule == PaymentSchedule.PerLesson)
+            try
             {
-                var platformFee = lesson.Price * platformFeeRate;
-                var netAmount = lesson.Price - platformFee;
-                await CreatePayoutAsync(tutor.Id, netAmount, "AUD");
+                var tutor = lesson.Listing.User;
+                if (tutor.PaymentSchedule == PaymentSchedule.PerLesson)
+                {
+                    var platformFee = lesson.Price * platformFeeRate;
+                    var netAmount = lesson.Price - platformFee;
+                    await CreatePayoutAsync(tutor.Id, netAmount, "AUD");
+                    lesson.Status = LessonStatus.Paid;
+                }
             }
+            catch (Exception ex)
+            {
+                // Log the failure but continue processing the rest of the lessons
+                _logger.LogError(ex, $"Failed to process lesson ID {lesson.Id}. Error: {ex.Message}");
+            }
+
         }
 
         if (pastBookedLessons.Any())
         {
             await _dbContext.SaveChangesAsync();
         }
-    }
-
-
-
-
-
-
-
-
-
-    public async Task<string> CreateAccountLinkAsync(string accountId)
-    {
-        StripeConfiguration.ApiKey = _stripeOptions.ApiKey;
-
-        var options = new AccountLinkCreateOptions
-        {
-            Account = accountId,
-            RefreshUrl = $"{_appOptions.FrontEndUrl}/profile?section=payments&detail=receiving",
-            ReturnUrl = $"{_appOptions.FrontEndUrl}/profile?section=payments&detail=receiving",
-            Type = "account_onboarding",
-        };
-        var service = new AccountLinkService();
-        var link = await service.CreateAsync(options);
-        return link.Url;
-    }
-
-    public async Task<string> CreateStripeAccountAsync(string userId)
-    {
-        var user = await _dbContext.Users.FindAsync(userId);
-        if (user == null)
-            throw new KeyNotFoundException("User not found.");
-
-        var gateway = _paymentGatewayFactory.GetPaymentGateway("Stripe");
-        var accountId = await gateway.CreateStripeAccountAsync(user.Email);
-
-        // Save the Account ID (account.Id) in your database
-        user.StripeCustomerId = accountId;
-        await _dbContext.SaveChangesAsync();
-
-        return accountId;
     }
 }
