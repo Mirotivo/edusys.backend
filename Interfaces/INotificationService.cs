@@ -1,0 +1,8 @@
+using Backend.Database.Models;
+using Backend.Services.Events;
+
+public interface INotificationService
+{
+    Task NotifyAsync<T>(NotificationEvent eventType, T eventData);
+    Task NotifyAsync(string userId, NotificationEvent eventName, string message, object? data = null);
+}
