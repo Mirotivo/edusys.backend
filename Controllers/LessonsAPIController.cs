@@ -62,6 +62,18 @@ public class LessonsAPIController : BaseController
     }
 
     [Authorize]
+    [HttpGet()]
+    public async Task<IActionResult> GetAllLessonsAsync()
+    {
+        var userId = GetUserId();
+
+        var propositions = await _lessonService.GetAllLessonPropositionsAsync(userId);
+        var lessons = await _lessonService.GetAllLessonsAsync(userId);
+
+        return JsonOk(new { Propositions = propositions, Lessons = lessons });
+    }
+
+    [Authorize]
     [HttpDelete("{lessonId}/cancel")]
     public async Task<IActionResult> CancelLessonAsync(int lessonId)
     {

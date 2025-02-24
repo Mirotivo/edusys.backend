@@ -13,4 +13,6 @@ public class LessonDto
     public string? MeetingUrl { get; set; }
     public string? MeetingRoomUrl { get; set; }
     public string? MeetingRoomName { get; set; }
+    public string? StudentName { get; set; }
+    public string? TutorName { get; set; }
 }

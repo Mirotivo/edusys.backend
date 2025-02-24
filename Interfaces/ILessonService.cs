@@ -6,6 +6,8 @@ public interface ILessonService
     // Read
     Task<List<LessonDto>> GetLessonPropositionsAsync(string contactId, string userId, int listingId);
     Task<List<LessonDto>> GetLessonsAsync(string contactId, string userId, int listingId);
+    Task<List<LessonDto>> GetAllLessonPropositionsAsync(string userId);
+    Task<List<LessonDto>> GetAllLessonsAsync(string userId);
 
     // Update
     Task<bool> RespondToPropositionAsync(int lessonId, bool accept, string userId);

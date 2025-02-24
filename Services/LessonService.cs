@@ -91,6 +91,8 @@ public class LessonService : ILessonService
     public async Task<List<LessonDto>> GetLessonPropositionsAsync(string contactId, string userId, int listingId)
     {
         var lessons = await _dbContext.Lessons
+            .Include(p => p.Student)
+            .Include(p => p.Listing).ThenInclude(p => p.User)
             .Where(p => p.Status == LessonStatus.Proposed)
             .Where(p => p.ListingId == listingId)
             .Where(p => (p.StudentId == contactId && p.Listing.UserId == userId) || (p.StudentId == userId && p.Listing.UserId == contactId))
@@ -103,6 +105,8 @@ public class LessonService : ILessonService
     public async Task<List<LessonDto>> GetLessonsAsync(string contactId, string userId, int listingId)
     {
         var lessons = await _dbContext.Lessons
+            .Include(p => p.Student)
+            .Include(p => p.Listing).ThenInclude(p => p.User)
             .Where(p => (p.Status == LessonStatus.Booked || p.Status == LessonStatus.Completed || p.Status == LessonStatus.Canceled))
             .Where(p => p.ListingId == listingId)
             .Where(p => (p.StudentId == contactId && p.Listing.UserId == userId) || (p.StudentId == userId && p.Listing.UserId == contactId))
@@ -110,6 +114,34 @@ public class LessonService : ILessonService
             .ToListAsync();
 
         return lessons.Select(lesson => MapToLessonDto(lesson)).ToList();
+    }
+
+    public async Task<List<LessonDto>> GetAllLessonPropositionsAsync(string userId)
+    {
+        var propositions = await _dbContext.Lessons
+            .Include(p => p.Student)
+            .Include(p => p.Listing).ThenInclude(p => p.User)
+            .Where(p => p.Status == LessonStatus.Proposed)
+            .Where(p => p.StudentId == userId || p.Listing.UserId == userId)
+            .OrderByDescending(p => p.Date)
+            .ToListAsync();
+
+        return propositions.Select(MapToLessonDto).ToList();
+    }
+
+    public async Task<List<LessonDto>> GetAllLessonsAsync(string userId)
+    {
+        var lessons = await _dbContext.Lessons
+            .Include(p => p.Student)
+            .Include(p => p.Listing).ThenInclude(p => p.User)
+            .Where(p => p.Status == LessonStatus.Booked ||
+                        p.Status == LessonStatus.Completed ||
+                        p.Status == LessonStatus.Canceled)
+            .Where(p => p.StudentId == userId || p.Listing.UserId == userId)
+            .OrderByDescending(p => p.Date)
+            .ToListAsync();
+
+        return lessons.Select(MapToLessonDto).ToList();
     }
 
     public async Task<bool> RespondToPropositionAsync(int lessonId, bool accept, string userId)
@@ -302,6 +334,8 @@ public class LessonService : ILessonService
             Duration = lesson.Duration,
             Price = lesson.Price,
             StudentId = lesson.StudentId,
+            StudentName = lesson.Student?.FullName ?? "Unkown Student",
+            TutorName = lesson.Listing?.User?.FullName ?? "Unknown Tutor",
             ListingId = lesson.ListingId,
             Status = lesson.Status,
             Topic = lesson.Listing?.Title ?? "Lesson",
