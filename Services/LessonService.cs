@@ -85,7 +85,7 @@ public class LessonService : ILessonService
             await _notificationService.NotifyAsync(NotificationEvent.BookingRequested, eventData);
         }
 
-        return MapToLessonDto(lesson);
+        return MapToLessonDto(lesson, userId);
     }
 
     public async Task<List<LessonDto>> GetLessonPropositionsAsync(string contactId, string userId, int listingId)
@@ -99,7 +99,7 @@ public class LessonService : ILessonService
             .OrderByDescending(p => p.Date)
             .ToListAsync();
 
-        return lessons.Select(lesson => MapToLessonDto(lesson)).ToList();
+        return lessons.Select(lesson => MapToLessonDto(lesson, userId)).ToList();
     }
 
     public async Task<List<LessonDto>> GetLessonsAsync(string contactId, string userId, int listingId)
@@ -113,7 +113,7 @@ public class LessonService : ILessonService
             .OrderByDescending(p => p.Date)
             .ToListAsync();
 
-        return lessons.Select(lesson => MapToLessonDto(lesson)).ToList();
+        return lessons.Select(lesson => MapToLessonDto(lesson, userId)).ToList();
     }
 
     public async Task<List<LessonDto>> GetAllLessonPropositionsAsync(string userId)
@@ -126,7 +126,7 @@ public class LessonService : ILessonService
             .OrderByDescending(p => p.Date)
             .ToListAsync();
 
-        return propositions.Select(MapToLessonDto).ToList();
+        return propositions.Select(lesson => MapToLessonDto(lesson, userId)).ToList();
     }
 
     public async Task<List<LessonDto>> GetAllLessonsAsync(string userId)
@@ -141,7 +141,7 @@ public class LessonService : ILessonService
             .OrderByDescending(p => p.Date)
             .ToListAsync();
 
-        return lessons.Select(MapToLessonDto).ToList();
+        return lessons.Select(lesson => MapToLessonDto(lesson, userId)).ToList();
     }
 
     public async Task<bool> RespondToPropositionAsync(int lessonId, bool accept, string userId)
@@ -325,7 +325,7 @@ public class LessonService : ILessonService
         return lesson;
     }
 
-    private LessonDto MapToLessonDto(Lesson lesson)
+    private LessonDto MapToLessonDto(Lesson lesson, string userId)
     {
         return new LessonDto
         {
@@ -336,6 +336,9 @@ public class LessonService : ILessonService
             StudentId = lesson.StudentId,
             StudentName = lesson.Student?.FullName ?? "Unkown Student",
             TutorName = lesson.Listing?.User?.FullName ?? "Unknown Tutor",
+            RecipientName = lesson.StudentId == userId
+                    ? lesson.Listing?.User?.FullName ?? "Unknown Tutor"
+                    : lesson.Student?.FullName ?? "Unknown Student",
             ListingId = lesson.ListingId,
             Status = lesson.Status,
             Topic = lesson.Listing?.Title ?? "Lesson",

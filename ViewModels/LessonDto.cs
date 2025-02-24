@@ -15,4 +15,5 @@ public class LessonDto
     public string? MeetingRoomName { get; set; }
     public string? StudentName { get; set; }
     public string? TutorName { get; set; }
+    public string? RecipientName { get; set; }
 }
