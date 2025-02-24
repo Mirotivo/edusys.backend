@@ -6,6 +6,7 @@ public class ChatDto
     public string StudentId { get; set; }
     public string RecipientId { get; set; }
     public string Name { get; set; }
+    public string ProfileImagePath { get; set; }
     public string LastMessage { get; set; }
     public string Timestamp { get; set; }
     public string Details { get; set; }
