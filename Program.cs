@@ -1,27 +1,13 @@
-using System;
 using System.Reflection;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using AutoMapper;
-using Backend.Interfaces;
+using Avancira.Infrastructure;
+using Avancira.Utilities;
 using Backend.Interfaces.Billing;
 using Backend.Middleware;
 using Backend.Services.BackgroundServices;
 using Backend.Services.PaymentBackgroundServices;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Prometheus;
 using Serilog;
@@ -53,6 +39,11 @@ public class Program
             builder.Services.AddTransient<GlobalExceptionMiddleware>();
             builder.Services.AddTransient<GeolocationMiddleware>();
             builder.Services.AddSingleton<Dictionary<string, string>>(new Dictionary<string, string>());
+            // Add Rate Limiting Service
+            builder.Services.AddRateLimiter(RateLimiterConfig.ConfigureRateLimiting);
+
+
+
             builder.Services.AddAvanciraDbContext(builder.Configuration, builder.Environment);
             builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
             builder.Services.AddTransients(Assembly.GetExecutingAssembly());
@@ -137,20 +128,20 @@ public class Program
                         }
                     };
                 });
-                //.AddGoogle(options =>
-                //{
-                //    var googleOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Google").Get<GoogleOptions>();
-                //    options.ClientId = googleOptions?.ClientId ?? string.Empty;
-                //    options.ClientSecret = googleOptions?.ClientSecret ?? string.Empty;
-                //    options.CallbackPath = "/api/users/social-login";
-                //})
-                //.AddFacebook(options =>
-                //{
-                //    var facebookOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Facebook").Get<FacebookOptions>();
-                //    options.AppId = facebookOptions?.AppId ?? string.Empty;
-                //    options.AppSecret = facebookOptions?.AppSecret ?? string.Empty;
-                //    options.CallbackPath = "/api/users/social-login";
-                //});
+            //.AddGoogle(options =>
+            //{
+            //    var googleOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Google").Get<GoogleOptions>();
+            //    options.ClientId = googleOptions?.ClientId ?? string.Empty;
+            //    options.ClientSecret = googleOptions?.ClientSecret ?? string.Empty;
+            //    options.CallbackPath = "/api/users/social-login";
+            //})
+            //.AddFacebook(options =>
+            //{
+            //    var facebookOptions = builder.Configuration.GetSection("Avancira:ExternalServices:Facebook").Get<FacebookOptions>();
+            //    options.AppId = facebookOptions?.AppId ?? string.Empty;
+            //    options.AppSecret = facebookOptions?.AppSecret ?? string.Empty;
+            //    options.CallbackPath = "/api/users/social-login";
+            //});
 
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
@@ -227,6 +218,15 @@ public class Program
             app.UseMiddleware<GeolocationMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
+            // Middleware for logging client IP
+            app.Use(async (context, next) =>
+            {
+                var clientIp = IpHelper.GetClientIp(context);
+                Log.Information($"Client IP: {clientIp}");
+                await next();
+            });
+
+            app.UseRateLimiter();
             app.MapControllers();
             app.MapHub<NotificationHub>("/notification");
             app.MapGet("/", async context =>
