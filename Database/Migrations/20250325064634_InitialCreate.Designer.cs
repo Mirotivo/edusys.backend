@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Database.Migrations
 {
     [DbContext(typeof(AvanciraDbContext))]
-    [Migration("20250324215222_InitialCreate")]
+    [Migration("20250325064634_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -354,9 +354,6 @@ namespace Backend.Database.Migrations
                     b.Property<bool>("IsVisible")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("LessonCategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("ListingImagePath")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -378,11 +375,24 @@ namespace Backend.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LessonCategoryId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Listings");
+                });
+
+            modelBuilder.Entity("ListingLessonCategory", b =>
+                {
+                    b.Property<int>("ListingId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LessonCategoryId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ListingId", "LessonCategoryId");
+
+                    b.HasIndex("LessonCategoryId");
+
+                    b.ToTable("ListingLessonCategories");
                 });
 
             modelBuilder.Entity("ListingRates", b =>
@@ -1097,21 +1107,32 @@ namespace Backend.Database.Migrations
 
             modelBuilder.Entity("Listing", b =>
                 {
-                    b.HasOne("LessonCategory", "LessonCategory")
-                        .WithMany()
-                        .HasForeignKey("LessonCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ListingLessonCategory", b =>
+                {
+                    b.HasOne("LessonCategory", "LessonCategory")
+                        .WithMany("ListingLessonCategories")
+                        .HasForeignKey("LessonCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Listing", "Listing")
+                        .WithMany("ListingLessonCategories")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("LessonCategory");
 
-                    b.Navigation("User");
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("ListingRates", b =>
@@ -1315,8 +1336,15 @@ namespace Backend.Database.Migrations
                     b.Navigation("Messages");
                 });
 
+            modelBuilder.Entity("LessonCategory", b =>
+                {
+                    b.Navigation("ListingLessonCategories");
+                });
+
             modelBuilder.Entity("Listing", b =>
                 {
+                    b.Navigation("ListingLessonCategories");
+
                     b.Navigation("Rates")
                         .IsRequired();
                 });

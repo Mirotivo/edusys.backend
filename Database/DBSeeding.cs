@@ -745,7 +745,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "C++"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "C++"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Advanced Programming Lessons (C++)",
                     Description = "Master programming concepts with hands-on lessons in C++ for beginners to advanced levels.",
@@ -757,7 +757,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "AWS"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "AWS"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "AWS and DevOps Fundamentals",
                     Description = "Learn AWS services (EC2, S3, RDS) and DevOps pipelines with tools like Jenkins and Docker.",
@@ -769,7 +769,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Introduction to Machine Learning",
                     Description = "Build foundational skills in machine learning, focusing on neural networks and deep learning with PyTorch.",
@@ -781,7 +781,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Computer Science"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Computer Science"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Computer Architecture Tutoring",
                     Description = "Specialized lessons in computer architecture and FPGA design for students and professionals.",
@@ -793,7 +793,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Python"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Python"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 45.0M, FiveHours = 45.0M * 5, TenHours = 45.0M * 10 },
                     Title = "Python for Data Science",
                     Description = "Learn Python programming for data analysis, visualization, and machine learning.",
@@ -805,7 +805,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Maths"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Maths"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 40.0M, FiveHours = 40.0M * 5, TenHours = 40.0M * 10 },
                     Title = "Mathematics Tutoring for All Levels",
                     Description = "Enhance your math skills with personalized lessons in algebra, calculus, and geometry for all levels.",
@@ -817,7 +817,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Java"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Java"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Java Programming Essentials",
                     Description = "Learn Java programming from basics to advanced, focusing on object-oriented programming and real-world applications.",
@@ -830,7 +830,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Frontend Development with Angular",
                     Description = "Learn how to build responsive web applications using Angular.",
@@ -844,7 +844,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Frontend Development with React",
                     Description = "Learn how to create dynamic and interactive web applications using React.",
@@ -858,7 +858,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Backend Development with .NET",
                     Description = "Master backend development using .NET and build robust APIs.",
@@ -872,7 +872,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Advanced Backend Development with .NET",
                     Description = "Dive deeper into advanced .NET features and build enterprise-grade applications.",
@@ -885,7 +885,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "AWS Solutions Architect Masterclass",
                     Description = "Prepare for the AWS Solutions Architect certification with hands-on labs in EC2, S3, VPC, and networking.",
@@ -897,7 +897,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Google Cloud Platform for Developers",
                     Description = "Learn GCP services like Compute Engine, BigQuery, and Cloud Functions.",
@@ -911,7 +911,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Web Development"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Web Development"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Full-Stack Web Development with MERN",
                     Description = "Learn to build full-stack web applications using MongoDB, Express, React, and Node.js.",
@@ -925,7 +925,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Ethical Hacking with Kali Linux",
                     Description = "Learn ethical hacking, penetration testing, and network security.",
@@ -939,7 +939,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Mastering Photoshop & Illustrator for Designers",
                     Description = "Learn photo editing, vector graphics, and branding.",
@@ -959,7 +959,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Financial Planning & Investment Strategies",
                     Description = "Learn to manage personal and business finances, investment strategies, and risk assessment.",
@@ -972,7 +972,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Corporate Finance & Accounting",
                     Description = "Learn how businesses manage financial decisions, budgeting, and cash flow.",
@@ -986,7 +986,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Marketing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Marketing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Digital Marketing & Social Media Strategy",
                     Description = "Learn SEO, paid ads, social media growth, and digital branding.",
@@ -1000,7 +1000,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 80.0M, FiveHours = 80.0M * 5, TenHours = 80.0M * 10 },
                     Title = "Business Analytics with Excel & Power BI",
                     Description = "Learn how to analyze business data using Excel, SQL, and Power BI dashboards.",
@@ -1013,7 +1013,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 85.0M, FiveHours = 85.0M * 5, TenHours = 85.0M * 10 },
                     Title = "Data Science & Business Forecasting",
                     Description = "Use predictive analytics and machine learning for business decision-making.",
@@ -1027,7 +1027,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Leadership & Management Skills",
                     Description = "Learn effective leadership, communication, and team management strategies.",
@@ -1040,7 +1040,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Project Management & Agile Methodologies",
                     Description = "Learn project management principles and Agile methodologies like Scrum and Kanban.",
@@ -1058,7 +1058,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Photography Masterclass: From Beginner to Pro",
                     Description = "Learn the fundamentals of photography, camera settings, lighting, and composition.",
@@ -1071,7 +1071,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Advanced Editing Techniques in Lightroom & Photoshop",
                     Description = "Master professional photo editing and retouching using Lightroom and Photoshop.",
@@ -1085,7 +1085,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Creative Writing & Blogging Essentials",
                     Description = "Learn how to craft compelling stories, blog posts, and engaging content.",
@@ -1098,7 +1098,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Freelance Writing & Monetizing Your Content",
                     Description = "Learn how to make money writing articles, blogs, and ebooks.",
@@ -1112,7 +1112,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Graphic Design with Adobe Illustrator & Photoshop",
                     Description = "Learn how to design logos, branding materials, and social media graphics.",
@@ -1126,7 +1126,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Video Editing with Adobe Premiere Pro & After Effects",
                     Description = "Learn how to create professional video edits and motion graphics.",
@@ -1139,7 +1139,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "YouTube Content Creation & Video Marketing",
                     Description = "Learn how to create engaging YouTube videos and grow your channel.",
@@ -1157,7 +1157,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "michael.harris@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Research"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Research"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Data Research and Analytics",
                     Description = "Deep dive into research methodologies and data analytics with expert guidance.",
@@ -1169,7 +1169,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "michael.harris@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Business Analytics and Data Science",
                     Description = "Learn business analytics with practical applications in data science.",
@@ -1181,7 +1181,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ava.smith@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Business Strategy and Market Research",
                     Description = "Develop business strategies and market research techniques with real-world applications.",
@@ -1193,7 +1193,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ava.smith@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Finance and Investment Strategies",
                     Description = "Learn financial planning, investment strategies, and portfolio management.",
@@ -1205,7 +1205,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ethan.clark@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Deep Learning and AI Fundamentals",
                     Description = "Learn deep learning concepts and AI fundamentals with hands-on coding exercises.",
@@ -1217,7 +1217,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ethan.clark@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Ethical Hacking and Cybersecurity Basics",
                     Description = "Learn cybersecurity principles and ethical hacking techniques with real-world applications.",
@@ -1229,7 +1229,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "sophia.white@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Academic Writing and Research Skills",
                     Description = "Improve your academic writing and research skills with expert guidance.",
@@ -1241,7 +1241,7 @@ public class ListingSeeder
                 new Listing
                 {
                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "mei.wong@avancira.com"))?.Id ?? string.Empty,
-                   LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Languages"))?.Id ?? 0,
+                   // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Languages"))?.Id ?? 0,
                    Rates = new ListingRates() { Hourly = 45.0M, FiveHours = 45.0M * 5, TenHours = 45.0M * 10 },
                    Title = "Japanese and English Language Lessons",
                    Description = "Master Japanese and English languages with structured lessons and cultural insights.",
@@ -1253,7 +1253,7 @@ public class ListingSeeder
                 new Listing
                 {
                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "noah.davis@avancira.com"))?.Id ?? string.Empty,
-                   LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Physics"))?.Id ?? 0,
+                   // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Physics"))?.Id ?? 0,
                    Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                    Title = "Physics and Space Science Lessons",
                    Description = "Explore physics concepts and space science fundamentals with a passionate professor.",
@@ -1265,7 +1265,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "olivia.brown@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Music"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Music"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Classical and Contemporary Music Lessons",
                     Description = "Develop musical skills and appreciation with structured lessons in classical and contemporary styles.",
@@ -1277,7 +1277,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ava.smith@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Market Research"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Market Research"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Market Research and Business Analytics",
                     Description = "Learn market research methodologies and business analytics for strategic decision-making.",
@@ -1289,7 +1289,7 @@ public class ListingSeeder
                 new Listing
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "charlotte.anderson@avancira.com"))?.Id ?? string.Empty,
-                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Social Media"))?.Id ?? 0,
+                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Social Media"))?.Id ?? 0,
                     Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Social Media Marketing Strategies",
                     Description = "Master social media marketing strategies and engagement techniques for brand growth.",
@@ -1302,6 +1302,235 @@ public class ListingSeeder
             };
 
             context.Listings.AddRange(listings);
+            context.SaveChanges();
+        }
+    }
+}
+
+
+public class ListingLessonCategorySeeder
+{
+    public static void Seed(AvanciraDbContext context, UserManager<User> userManager)
+    {
+        if (!context.ListingLessonCategories.Any())
+        {
+            var listingLessonCategories = new List<ListingLessonCategory>
+            {
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Advanced Programming Lessons (C++)"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "C++"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "AWS and DevOps Fundamentals"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "AWS"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Introduction to Machine Learning"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Computer Architecture Tutoring"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Computer Science"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Python for Data Science"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Python"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Mathematics Tutoring for All Levels"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Maths"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Java Programming Essentials"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Java"))?.Id ?? 0,
+                },
+                // Frontend Development - Angular
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Frontend Development with Angular"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
+                },
+                // Frontend Development - React
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Frontend Development with React"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Backend Development with .NET"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Advanced Backend Development with .NET"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "AWS Solutions Architect Masterclass"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Google Cloud Platform for Developers"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Full-Stack Web Development with MERN"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Web Development"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Ethical Hacking with Kali Linux"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Mastering Photoshop & Illustrator for Designers"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Financial Planning & Investment Strategies"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Corporate Finance & Accounting"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Digital Marketing & Social Media Strategy"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Marketing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Business Analytics with Excel & Power BI"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Data Science & Business Forecasting"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Leadership & Management Skills"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Project Management & Agile Methodologies"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Photography Masterclass: From Beginner to Pro"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Advanced Editing Techniques in Lightroom & Photoshop"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Creative Writing & Blogging Essentials"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Freelance Writing & Monetizing Your Content"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Graphic Design with Adobe Illustrator & Photoshop"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Video Editing with Adobe Premiere Pro & After Effects"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "YouTube Content Creation & Video Marketing"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Data Research and Analytics"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Research"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Business Analytics and Data Science"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Business Strategy and Market Research"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Finance and Investment Strategies"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Deep Learning and AI Fundamentals"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Ethical Hacking and Cybersecurity Basics"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Academic Writing and Research Skills"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Japanese and English Language Lessons"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Languages"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Physics and Space Science Lessons"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Physics"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Classical and Contemporary Music Lessons"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Music"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Market Research and Business Analytics"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Market Research"))?.Id ?? 0,
+                },
+                new ListingLessonCategory
+                {
+                    ListingId = context.Listings.FirstOrDefault(c => EF.Functions.Like(c.Title, "Social Media Marketing Strategies"))?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Social Media"))?.Id ?? 0,
+                },
+            };
+
+            context.ListingLessonCategories.AddRange(listingLessonCategories);
             context.SaveChanges();
         }
     }
@@ -1492,20 +1721,6 @@ public class MessageSeeder
                     RecipientId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     Content = "How did create this system?"
                 },
-                // new Message
-                // {
-                //     ChatId = 2,
-                //     SenderId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Student@gmail.com"))?.Id ?? 0,
-                //     RecipientId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Tutor@gmail.com"))?.Id ?? 0,
-                //     Content = "Can you teach me?"
-                // },
-                // new Message
-                // {
-                //     ChatId = 2,
-                //     SenderId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Tutor@gmail.com"))?.Id ?? 0,
-                //     RecipientId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Student@gmail.com"))?.Id ?? 0,
-                //     Content = "What lesson?"
-                // }
             };
 
             context.Messages.AddRange(chats);

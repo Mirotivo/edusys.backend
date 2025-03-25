@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,12 +13,6 @@ public class Listing : IOwnableAccountable
 
     [ForeignKey(nameof(Listing.UserId))]
     public User? User { get; set; }
-
-    public int LessonCategoryId { get; set; }
-
-    [ForeignKey(nameof(Listing.LessonCategoryId))]
-    public LessonCategory? LessonCategory { get; set; }
-
 
     [MaxLength(100)]
     public string Title { get; set; }
@@ -41,6 +36,8 @@ public class Listing : IOwnableAccountable
 
     public bool IsVisible { get; set; } = true;
 
+    public ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
+
     public bool Active { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -59,7 +56,7 @@ public class Listing : IOwnableAccountable
 
     public override string ToString()
     {
-        return $"Listing: {Id}, Title: {Title}, LessonCategoryId: {LessonCategoryId}, UserId: {UserId}, IsVisible: {IsVisible}";
+        return $"Listing: {Id}, Title: {Title}, UserId: {UserId}, IsVisible: {IsVisible}";
     }
 }
 

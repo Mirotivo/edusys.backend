@@ -32,7 +32,7 @@ public class LessonCategoryService : ILessonCategoryService
             .OrderBy(_ => Guid.NewGuid())
             .Where(category => category.ShowInDashboard)
             .Take(12)
-            .Select(category => MapToLessonCategoryDto(category, _dbContext.Listings.Count(l => l.Active && l.IsVisible && l.LessonCategoryId == category.Id)))
+            .Select(category => MapToLessonCategoryDto(category, _dbContext.ListingLessonCategories.Include(l => l.Listing).Count(l => l.Listing.Active && l.Listing.IsVisible && l.LessonCategoryId == category.Id)))
             .ToList();
     }
 

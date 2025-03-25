@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 public class LessonCategory
@@ -10,6 +11,7 @@ public class LessonCategory
     public string Name { get; set; }
     public bool ShowInDashboard { get; set; } = false;
     public string? ImagePath { get; set; }
+    public ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
 
     public LessonCategory()
     {

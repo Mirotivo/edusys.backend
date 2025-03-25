@@ -13,6 +13,7 @@ public static class DbInitializer
         // UserSeeder.Seed(context, userManager);
         // LessonCategorySeeder.Seed(context, userManager);
         // ListingSeeder.Seed(context, userManager);
+        // ListingLessonCategorySeeder.Seed(context, userManager);
 
         // PromoCodeSeeder.Seed(context);
         // LessonSeeder.Seed(context);

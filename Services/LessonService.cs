@@ -211,7 +211,7 @@ public class LessonService : ILessonService
             Results = results
         };
     }
-    public async Task<bool> RespondToPropositionAsync(int lessonId, bool accept, string userId)
+    public async Task<LessonDto> UpdateLessonStatusAsync(int lessonId, bool accept, string userId)
     {
         var lesson = await _dbContext.Lessons
             .Include(l => l.Transaction)
@@ -222,7 +222,7 @@ public class LessonService : ILessonService
 
         if (lesson == null)
         {
-            return false;
+            throw new KeyNotFoundException("Lesson not found.");
         }
 
         if (accept)
@@ -232,7 +232,6 @@ public class LessonService : ILessonService
                 // Process payment using the shared method
                 var transaction = await _paymentService.CapturePaymentAsync(lesson.TransactionId, lesson.Transaction.PaymentMethod.ToString(), lesson.Listing?.UserId);
 
-                lesson.Status = LessonStatus.Booked;
                 lesson.TransactionId = transaction.Id;
 
 
@@ -245,6 +244,7 @@ public class LessonService : ILessonService
                 lesson.MeetingUrl = meeting.ServerUrl;
                 lesson.MeetingRoomName = meeting.RoomName;
                 lesson.MeetingRoomUrl = meeting.MeetingUrl;
+                lesson.Status = LessonStatus.Booked;
             }
             catch (Exception ex)
             {
@@ -253,6 +253,79 @@ public class LessonService : ILessonService
         }
         else
         {
+            if (lesson.Status == LessonStatus.Booked)
+            {
+                var isTutor = lesson.Listing.UserId == userId;
+
+                if (!isTutor && lesson.StudentId != userId)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to cancel this lesson.");
+                }
+
+                // Calculate refund amount
+                var refundAmount = lesson.Price;
+                var lessonStartTime = lesson.Date;
+                var currentTime = DateTime.UtcNow;
+
+                decimal retainedAmount = 0;
+                if (!isTutor && lessonStartTime.Subtract(currentTime).TotalHours <= 24)
+                {
+                    // If the student cancels less than 1 day before the lesson, retain tutor compensation
+                    var tutorPercentage = lesson.Listing.User.TutorRefundRetention / 100m;
+                    retainedAmount = refundAmount * tutorPercentage;
+                    refundAmount -= retainedAmount; // Refund the remaining amount
+
+                    _logger.LogInformation($"Partial refund applied. Retained: {retainedAmount:C}, Refunded: {refundAmount:C}.");
+                }
+                else
+                {
+                    // Full refund if canceled more than 1 day before
+                    _logger.LogInformation($"Full refund of {refundAmount:C} applied.");
+                }
+
+                // Perform refund
+                await _paymentService.RefundPaymentAsync(lesson.TransactionId, lesson.Price, 0); // Fully Refund
+                                                                                                 // await _paymentService.RefundPaymentAsync(lesson.TransactionId ?? -1, refundAmount, retainedAmount);
+
+                // Check if there is a retained amount to pay the tutor
+                if (retainedAmount > 0)
+                {
+                    try
+                    {
+                        // Temporarily set lesson price to retainedAmount for payment
+                        var originalPrice = lesson.Price;
+                        lesson.Price = retainedAmount;
+
+                        // Pay the retained amount to the tutor
+                        var transaction = await _paymentService.CapturePaymentAsync(lesson.TransactionId, lesson.Transaction.PaymentMethod.ToString(), lesson.Listing?.UserId);
+
+                        lesson.TransactionId = transaction.Id;
+                        _dbContext.Lessons.Update(lesson);
+                        await _dbContext.SaveChangesAsync();
+
+
+                        // Restore original price for lesson
+                        lesson.Price = originalPrice;
+
+                        _logger.LogInformation($"Retained amount of {retainedAmount:C} paid to tutor.");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Failed to process retained amount payment: " + ex.Message);
+                    }
+                }
+
+                // Log or notify about the refund
+                if (isTutor)
+                {
+                    _logger.LogInformation($"Full refund of {lesson.Price:C} processed for student.");
+                }
+                else
+                {
+                    _logger.LogInformation($"Partial refund of {refundAmount:C} processed. Tutor retained: {lesson.Price - refundAmount:C}.");
+                }
+
+            }
             lesson.Status = LessonStatus.Canceled;
         }
         _dbContext.Lessons.Update(lesson);
@@ -281,7 +354,7 @@ public class LessonService : ILessonService
             await _notificationService.NotifyAsync(NotificationEvent.PropositionResponded, eventData);
         }
 
-        return true;
+        return MapToLessonDto(lesson, userId);
     }
 
     public async Task ProcessPastBookedLessons()
@@ -323,15 +396,12 @@ public class LessonService : ILessonService
             await _dbContext.SaveChangesAsync();
         }
     }
-    public async Task<Lesson> CancelLessonAsync(int lessonId, string userId)
+    public async Task<Lesson> UpdateLessonStatusAsync(int lessonId, string userId)
     {
-        // Include the Listing for tutor and the Transaction for PayPalPaymentId
         var lesson = await _dbContext.Lessons
             .Include(l => l.Transaction)
             .Include(l => l.Student)
-            .Include(l => l.Listing)       // Include the Listing for tutor information
-            .ThenInclude(l => l.User)
-            .Include(l => l.Transaction)   // Include the linked Transaction
+            .Include(l => l.Listing).ThenInclude(l => l.User)
             .AsTracking()
             .FirstOrDefaultAsync(l => l.Id == lessonId);
 

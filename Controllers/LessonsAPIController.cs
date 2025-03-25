@@ -66,13 +66,25 @@ public class LessonsAPIController : BaseController
     public async Task<IActionResult> RespondToPropositionAsync(int lessonId, [FromBody] bool accept)
     {
         var userId = GetUserId();
-
-        if (!await _lessonService.RespondToPropositionAsync(lessonId, accept, userId))
+        LessonDto updatedLesson;
+        try
+        {
+            updatedLesson = await _lessonService.UpdateLessonStatusAsync(lessonId, accept, userId);
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound(new { Message = "Lesson not found." });
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "An error occurred while responding to the proposition.", Details = ex.Message });
+        }
 
-        return JsonOk(new { Message = accept ? "Proposition accepted." : "Proposition refused." });
+        return JsonOk(new
+        {
+            Message = accept ? "Proposition accepted." : "Proposition refused.",
+            Lesson = updatedLesson
+        });
     }
 
     // Delete
@@ -83,7 +95,7 @@ public class LessonsAPIController : BaseController
         try
         {
             var userId = GetUserId(); // Extract user ID from the token
-            var canceledLesson = await _lessonService.CancelLessonAsync(lessonId, userId);
+            var canceledLesson = await _lessonService.UpdateLessonStatusAsync(lessonId, false, userId);
 
             return JsonOk(new
             {

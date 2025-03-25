@@ -94,7 +94,10 @@ public class ListingService : IListingService
                 })
                 .Aggregate(ListingLocationType.None, (current, parsedLocation) => current | parsedLocation)
                 ?? ListingLocationType.None,
-            LessonCategoryId = lessonCategoryId,
+            ListingLessonCategories = new List<ListingLessonCategory>
+            {
+                new ListingLessonCategory { LessonCategoryId = lessonCategoryId }
+            },
             UserId = userId,
             Rates = new ListingRates
             {
@@ -110,7 +113,7 @@ public class ListingService : IListingService
         // Reload the listing with related data
         var loadedListing = await _dbContext.Listings
             .Include(l => l.User)
-            .Include(l => l.LessonCategory)
+            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.Rates)
             .FirstOrDefaultAsync(l => l.Id == listing.Id);
 
@@ -127,7 +130,7 @@ public class ListingService : IListingService
     {
         var listing = _dbContext.Listings
             .Include(l => l.Rates)
-            .Include(l => l.LessonCategory)
+            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User).ThenInclude(l => l.Address)
             .FirstOrDefault(l => l.Id == id);
 
@@ -138,7 +141,7 @@ public class ListingService : IListingService
     {
         var queryable = _dbContext.Listings
             .Include(l => l.Rates)
-            .Include(l => l.LessonCategory)
+            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.UserId == userId);
 
@@ -166,7 +169,7 @@ public class ListingService : IListingService
     {
         var listings = _dbContext.Listings
             .Include(l => l.Rates)
-            .Include(l => l.LessonCategory)
+            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.IsVisible)
             .OrderBy(_ => Guid.NewGuid())
@@ -180,7 +183,7 @@ public class ListingService : IListingService
     {
         var listings = _dbContext.Listings
             .Include(l => l.Rates)
-            .Include(l => l.LessonCategory)
+            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.IsVisible)
             .OrderBy(_ => Guid.NewGuid())
@@ -194,7 +197,7 @@ public class ListingService : IListingService
     {
         var queryable = _dbContext.Listings
             .Include(l => l.Rates)
-            .Include(l => l.LessonCategory)
+            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User).ThenInclude(l => l.Address)
             .Where(l => EF.Functions.Like(l.Title, $"%{query}%") ||
                         EF.Functions.Like(l.Description, $"%{query}%") ||
@@ -203,7 +206,7 @@ public class ListingService : IListingService
         // Apply category filtering if categories are selected
         if (categories.Any())
         {
-            queryable = queryable.Where(l => categories.Contains(l.LessonCategory.Name));
+            queryable = queryable.Where(l => l.ListingLessonCategories.Any(j => categories.Contains(j.LessonCategory.Name)));
         }
 
         if (lat.HasValue && lng.HasValue)
@@ -341,7 +344,10 @@ public class ListingService : IListingService
         var categoryExists = await _dbContext.LessonCategories.AnyAsync(c => c.Id == newCategoryId);
         if (!categoryExists) return false;
 
-        listing.LessonCategoryId = newCategoryId;
+        listing.ListingLessonCategories = new List<ListingLessonCategory>
+        {
+            new ListingLessonCategory { LessonCategoryId = newCategoryId }
+        };
         _dbContext.Listings.Update(listing);
         await _dbContext.SaveChangesAsync();
         return true;
@@ -426,7 +432,7 @@ public class ListingService : IListingService
             ContactedCount = contactedCount ?? 0,
             TutorAddress = addressDto,
             Reviews = 0,
-            LessonCategory = listing.LessonCategory?.Name,
+            LessonCategory = listing.ListingLessonCategories.FirstOrDefault()?.LessonCategory.Name,
             Title = listing.Title,
             ListingImagePath = listing.ListingImagePath,
             Locations = Enum.GetValues(typeof(ListingLocationType))

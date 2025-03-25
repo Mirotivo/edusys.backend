@@ -280,7 +280,6 @@ namespace Backend.Database.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    LessonCategoryId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     ListingImagePath = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -300,12 +299,6 @@ namespace Backend.Database.Migrations
                         name: "FK_Listings_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Listings_LessonCategories_LessonCategoryId",
-                        column: x => x.LessonCategoryId,
-                        principalTable: "LessonCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -507,6 +500,30 @@ namespace Backend.Database.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Chats_Listings_ListingId",
+                        column: x => x.ListingId,
+                        principalTable: "Listings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ListingLessonCategories",
+                columns: table => new
+                {
+                    ListingId = table.Column<int>(type: "integer", nullable: false),
+                    LessonCategoryId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListingLessonCategories", x => new { x.ListingId, x.LessonCategoryId });
+                    table.ForeignKey(
+                        name: "FK_ListingLessonCategories_LessonCategories_LessonCategoryId",
+                        column: x => x.LessonCategoryId,
+                        principalTable: "LessonCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ListingLessonCategories_Listings_ListingId",
                         column: x => x.ListingId,
                         principalTable: "Listings",
                         principalColumn: "Id",
@@ -743,15 +760,15 @@ namespace Backend.Database.Migrations
                 column: "TransactionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ListingLessonCategories_LessonCategoryId",
+                table: "ListingLessonCategories",
+                column: "LessonCategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ListingRates_ListingId",
                 table: "ListingRates",
                 column: "ListingId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Listings_LessonCategoryId",
-                table: "Listings",
-                column: "LessonCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Listings_UserId",
@@ -858,6 +875,9 @@ namespace Backend.Database.Migrations
                 name: "Lessons");
 
             migrationBuilder.DropTable(
+                name: "ListingLessonCategories");
+
+            migrationBuilder.DropTable(
                 name: "ListingRates");
 
             migrationBuilder.DropTable(
@@ -888,6 +908,9 @@ namespace Backend.Database.Migrations
                 name: "Transactions");
 
             migrationBuilder.DropTable(
+                name: "LessonCategories");
+
+            migrationBuilder.DropTable(
                 name: "Chats");
 
             migrationBuilder.DropTable(
@@ -901,9 +924,6 @@ namespace Backend.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "LessonCategories");
 
             migrationBuilder.DropTable(
                 name: "Countries");

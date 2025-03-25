@@ -11,10 +11,7 @@ public interface ILessonService
     Task<PagedResult<LessonDto>> GetAllLessonsAsync(string userId, LessonFilter filters);
 
     // Update
-    Task<bool> RespondToPropositionAsync(int lessonId, bool accept, string userId);
+    Task<LessonDto> UpdateLessonStatusAsync(int lessonId, bool accept, string userId);
     Task ProcessPastBookedLessons();
-
-    // Delete
-    Task<Lesson> CancelLessonAsync(int lessonId, string userId);
 }
 

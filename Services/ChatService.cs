@@ -44,7 +44,9 @@ public class ChatService : IChatService
     {
         var chats = _dbContext.Chats
             .Where(c => c.StudentId == userId || c.TutorId == userId)
-            .Include(c => c.Listing != null ? c.Listing.LessonCategory : null)
+            .Include(c => c.Listing)
+                .ThenInclude(l => l.ListingLessonCategories)
+                    .ThenInclude(llc => llc.LessonCategory)
             .Include(c => c.Tutor)
             .Include(c => c.Student)
             .Include(c => c.Messages)
@@ -58,6 +60,10 @@ public class ChatService : IChatService
                 .OrderByDescending(m => m.SentAt)
                 .FirstOrDefault();
 
+            var lessonCategory = c.Listing?.ListingLessonCategories
+                .Select(llc => llc.LessonCategory?.Name)
+                .FirstOrDefault(name => !string.IsNullOrEmpty(name));
+
             return new ChatDto
             {
                 Id = c.Id,
@@ -65,8 +71,8 @@ public class ChatService : IChatService
                 TutorId = c.TutorId,
                 StudentId = c.StudentId,
                 RecipientId = c.StudentId == userId ? c.TutorId : c.StudentId,
-                Details = c.Listing?.LessonCategory != null
-                    ? $"{c.Listing.LessonCategory.Name} {(c.StudentId == userId ? "Tutor" : "Student")}"
+                Details = lessonCategory != null
+                    ? $"{lessonCategory} {(c.StudentId == userId ? "Tutor" : "Student")}"
                     : "No lesson category",
                 Name = c.StudentId == userId
                     ? c.Tutor?.FullName ?? "Unknown Tutor"

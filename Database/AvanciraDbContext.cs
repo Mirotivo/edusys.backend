@@ -19,6 +19,7 @@ public class AvanciraDbContext : IdentityDbContext<User>
     public DbSet<Referral> Referrals { get; set; }
 
     public DbSet<LessonCategory> LessonCategories { get; set; }
+    public DbSet<ListingLessonCategory> ListingLessonCategories { get; set; }
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<Listing> Listings { get; set; }
     public DbSet<Review> Reviews { get; set; }
@@ -41,6 +42,7 @@ public class AvanciraDbContext : IdentityDbContext<User>
         Countries = Set<Country>();
         Referrals = Set<Referral>();
         LessonCategories = Set<LessonCategory>();
+        ListingLessonCategories = Set<ListingLessonCategory>();
         Lessons = Set<Lesson>();
         Listings = Set<Listing>();
         Reviews = Set<Review>();
@@ -100,6 +102,19 @@ public class AvanciraDbContext : IdentityDbContext<User>
             entity.Property(wl => wl.NewBalance).HasPrecision(18, 4);
         });
 
+
+        modelBuilder.Entity<ListingLessonCategory>()
+        .HasKey(x => new { x.ListingId, x.LessonCategoryId });
+
+            modelBuilder.Entity<ListingLessonCategory>()
+                .HasOne(x => x.Listing)
+                .WithMany(l => l.ListingLessonCategories)
+                .HasForeignKey(x => x.ListingId);
+
+            modelBuilder.Entity<ListingLessonCategory>()
+                .HasOne(x => x.LessonCategory)
+                .WithMany(c => c.ListingLessonCategories)
+                .HasForeignKey(x => x.LessonCategoryId);
 
         // Review configuration
         modelBuilder.Entity<Review>()
