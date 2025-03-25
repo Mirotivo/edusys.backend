@@ -99,7 +99,7 @@ public class ListingService : IListingService
                 new ListingLessonCategory { LessonCategoryId = lessonCategoryId }
             },
             UserId = userId,
-            Rates = new ListingRates
+            HourRate = new ListingRates
             {
                 Hourly = createListingDto.Rates.Hourly,
                 FiveHours = createListingDto.Rates.FiveHours,
@@ -114,7 +114,7 @@ public class ListingService : IListingService
         var loadedListing = await _dbContext.Listings
             .Include(l => l.User)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .FirstOrDefaultAsync(l => l.Id == listing.Id);
 
         if (loadedListing == null)
@@ -129,7 +129,7 @@ public class ListingService : IListingService
     public ListingDto GetListingById(int id)
     {
         var listing = _dbContext.Listings
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User).ThenInclude(l => l.Address)
             .FirstOrDefault(l => l.Id == id);
@@ -140,7 +140,7 @@ public class ListingService : IListingService
     public async Task<PagedResult<ListingDto>> GetUserListingsAsync(string userId, int page, int pageSize)
     {
         var queryable = _dbContext.Listings
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.UserId == userId);
@@ -168,7 +168,7 @@ public class ListingService : IListingService
     public IEnumerable<ListingDto> GetLandingPageListings()
     {
         var listings = _dbContext.Listings
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.IsVisible)
@@ -182,7 +182,7 @@ public class ListingService : IListingService
     public IEnumerable<ListingDto> GetLandingPageTrendingListings()
     {
         var listings = _dbContext.Listings
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.IsVisible)
@@ -196,7 +196,7 @@ public class ListingService : IListingService
     public PagedResult<ListingDto> SearchListings(string query, List<string> categories, int page, int pageSize, double? lat = null, double? lng = null, double radiusKm = 10)
     {
         var queryable = _dbContext.Listings
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User).ThenInclude(l => l.Address)
             .Where(l => EF.Functions.Like(l.Title, $"%{query}%") ||
@@ -356,16 +356,16 @@ public class ListingService : IListingService
     public async Task<bool> ModifyListingRatesAsync(int listingId, string userId, RatesDto newRates)
     {
         var listing = await _dbContext.Listings
-            .Include(l => l.Rates)
+            .Include(l => l.HourRate)
             .Where(l => l.Id == listingId && l.UserId == userId)
             .AsTracking()
             .FirstOrDefaultAsync();
 
         if (listing == null) return false;
 
-        listing.Rates.Hourly = newRates.Hourly;
-        listing.Rates.FiveHours = newRates.FiveHours;
-        listing.Rates.TenHours = newRates.TenHours;
+        listing.HourRate.Hourly = newRates.Hourly;
+        listing.HourRate.FiveHours = newRates.FiveHours;
+        listing.HourRate.TenHours = newRates.TenHours;
         _dbContext.Listings.Update(listing);
         await _dbContext.SaveChangesAsync();
         return true;
@@ -442,12 +442,12 @@ public class ListingService : IListingService
                             .ToList(),
             AboutLesson = listing.AboutLesson,
             AboutYou = listing.AboutYou,
-            Rate = $"{listing.Rates.Hourly}/h",
+            Rate = $"{listing.HourRate.Hourly}/h",
             Rates = new RatesDto
             {
-                Hourly = listing.Rates.Hourly,
-                FiveHours = listing.Rates.FiveHours,
-                TenHours = listing.Rates.TenHours
+                Hourly = listing.HourRate.Hourly,
+                FiveHours = listing.HourRate.FiveHours,
+                TenHours = listing.HourRate.TenHours
             },
             SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
         };

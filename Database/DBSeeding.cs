@@ -577,20 +577,20 @@ public class LessonCategorySeeder
                 new LessonCategory { Name = "IELTS"},
                 new LessonCategory { Name = "UCAT" },
                 new LessonCategory { Name = "ESL" },
-                new LessonCategory { Name = "Research", ImagePath = $"assets/img/categories/cate-16.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Writing", ImagePath = $"assets/img/categories/cate-8.png", ShowInDashboard = true },
+                new LessonCategory { Name = "Research", ImageUrl = $"assets/img/categories/cate-16.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Writing", ImageUrl = $"assets/img/categories/cate-8.png", DisplayInLandingPage = true },
 
                 // Business & Marketing
-                new LessonCategory { Name = "Business", ImagePath = $"assets/img/categories/cate-9.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Marketing", ImagePath = $"assets/img/categories/cate-10.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Finance", ImagePath = $"assets/img/categories/cate-17.png", ShowInDashboard = true },
+                new LessonCategory { Name = "Business", ImageUrl = $"assets/img/categories/cate-9.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Marketing", ImageUrl = $"assets/img/categories/cate-10.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Finance", ImageUrl = $"assets/img/categories/cate-17.png", DisplayInLandingPage = true },
                 new LessonCategory { Name = "Entrepreneurship" },
-                new LessonCategory { Name = "Social Media", ImagePath = $"assets/img/categories/cate-13.png", ShowInDashboard = true },
+                new LessonCategory { Name = "Social Media", ImageUrl = $"assets/img/categories/cate-13.png", DisplayInLandingPage = true },
                 new LessonCategory { Name = "Public Relations" },
                 new LessonCategory { Name = "Advertising" },
                 new LessonCategory { Name = "Management" },
-                new LessonCategory { Name = "Business Analytics", ImagePath = $"assets/img/categories/cate-22.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Market Research", ImagePath = $"assets/img/categories/cate-21.png", ShowInDashboard = true },
+                new LessonCategory { Name = "Business Analytics", ImageUrl = $"assets/img/categories/cate-22.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Market Research", ImageUrl = $"assets/img/categories/cate-21.png", DisplayInLandingPage = true },
 
                 // Languages
                 new LessonCategory { Name = "Languages"},
@@ -651,16 +651,16 @@ public class LessonCategorySeeder
                 new LessonCategory { Name = "Data Science"},
                 new LessonCategory { Name = "Machine Learning"},
                 new LessonCategory { Name = "Frontend Development"},
-                new LessonCategory { Name = "Backend Development", ImagePath = $"assets/img/categories/cate-26.png", ShowInDashboard = true},
+                new LessonCategory { Name = "Backend Development", ImageUrl = $"assets/img/categories/cate-26.png", DisplayInLandingPage = true},
                 new LessonCategory { Name = "AWS"},
                 new LessonCategory { Name = "Computer Science"},
-                new LessonCategory { Name = "Cloud Computing", ImagePath = $"assets/img/categories/cate-11.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Web Development", ImagePath = $"assets/img/categories/cate-12.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Cybersecurity", ImagePath = $"assets/img/categories/cate-15.png", ShowInDashboard = true },
-                new LessonCategory { Name = "Graphic Design", ImagePath = $"assets/img/categories/cate-7.png", ShowInDashboard = true },
+                new LessonCategory { Name = "Cloud Computing", ImageUrl = $"assets/img/categories/cate-11.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Web Development", ImageUrl = $"assets/img/categories/cate-12.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Cybersecurity", ImageUrl = $"assets/img/categories/cate-15.png", DisplayInLandingPage = true },
+                new LessonCategory { Name = "Graphic Design", ImageUrl = $"assets/img/categories/cate-7.png", DisplayInLandingPage = true },
 
                 // Hobbies and Leisure
-                new LessonCategory { Name = "Photography", ImagePath = $"assets/img/categories/cate-14.png", ShowInDashboard = true },
+                new LessonCategory { Name = "Photography", ImageUrl = $"assets/img/categories/cate-14.png", DisplayInLandingPage = true },
                 new LessonCategory { Name = "Music" },
                 new LessonCategory { Name = "Video Editing" },
                 new LessonCategory { Name = "Chess" },
@@ -746,7 +746,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "C++"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Advanced Programming Lessons (C++)",
                     Description = "Master programming concepts with hands-on lessons in C++ for beginners to advanced levels.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -758,7 +758,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "AWS"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "AWS and DevOps Fundamentals",
                     Description = "Learn AWS services (EC2, S3, RDS) and DevOps pipelines with tools like Jenkins and Docker.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -770,7 +770,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Introduction to Machine Learning",
                     Description = "Build foundational skills in machine learning, focusing on neural networks and deep learning with PyTorch.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -782,7 +782,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Computer Science"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Computer Architecture Tutoring",
                     Description = "Specialized lessons in computer architecture and FPGA design for students and professionals.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -794,7 +794,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Python"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 45.0M, FiveHours = 45.0M * 5, TenHours = 45.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 45.0M, FiveHours = 45.0M * 5, TenHours = 45.0M * 10 },
                     Title = "Python for Data Science",
                     Description = "Learn Python programming for data analysis, visualization, and machine learning.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -806,7 +806,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Maths"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 40.0M, FiveHours = 40.0M * 5, TenHours = 40.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 40.0M, FiveHours = 40.0M * 5, TenHours = 40.0M * 10 },
                     Title = "Mathematics Tutoring for All Levels",
                     Description = "Enhance your math skills with personalized lessons in algebra, calculus, and geometry for all levels.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -818,7 +818,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Java"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Java Programming Essentials",
                     Description = "Learn Java programming from basics to advanced, focusing on object-oriented programming and real-world applications.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -831,7 +831,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Frontend Development with Angular",
                     Description = "Learn how to build responsive web applications using Angular.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -845,7 +845,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Frontend Development"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Frontend Development with React",
                     Description = "Learn how to create dynamic and interactive web applications using React.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -859,7 +859,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Backend Development with .NET",
                     Description = "Master backend development using .NET and build robust APIs.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -873,7 +873,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Backend Development"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Advanced Backend Development with .NET",
                     Description = "Dive deeper into advanced .NET features and build enterprise-grade applications.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -886,7 +886,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "AWS Solutions Architect Masterclass",
                     Description = "Prepare for the AWS Solutions Architect certification with hands-on labs in EC2, S3, VPC, and networking.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -898,7 +898,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cloud Computing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Google Cloud Platform for Developers",
                     Description = "Learn GCP services like Compute Engine, BigQuery, and Cloud Functions.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -912,7 +912,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Web Development"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Full-Stack Web Development with MERN",
                     Description = "Learn to build full-stack web applications using MongoDB, Express, React, and Node.js.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -926,7 +926,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Ethical Hacking with Kali Linux",
                     Description = "Learn ethical hacking, penetration testing, and network security.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -940,7 +940,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amr.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Mastering Photoshop & Illustrator for Designers",
                     Description = "Learn photo editing, vector graphics, and branding.",
                     ListingImagePath = $"assets/img/mentor/amr_mostafa.jpg",
@@ -960,7 +960,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Financial Planning & Investment Strategies",
                     Description = "Learn to manage personal and business finances, investment strategies, and risk assessment.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -973,7 +973,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Corporate Finance & Accounting",
                     Description = "Learn how businesses manage financial decisions, budgeting, and cash flow.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -987,7 +987,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Marketing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Digital Marketing & Social Media Strategy",
                     Description = "Learn SEO, paid ads, social media growth, and digital branding.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -1001,7 +1001,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 80.0M, FiveHours = 80.0M * 5, TenHours = 80.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 80.0M, FiveHours = 80.0M * 5, TenHours = 80.0M * 10 },
                     Title = "Business Analytics with Excel & Power BI",
                     Description = "Learn how to analyze business data using Excel, SQL, and Power BI dashboards.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -1014,7 +1014,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 85.0M, FiveHours = 85.0M * 5, TenHours = 85.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 85.0M, FiveHours = 85.0M * 5, TenHours = 85.0M * 10 },
                     Title = "Data Science & Business Forecasting",
                     Description = "Use predictive analytics and machine learning for business decision-making.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -1028,7 +1028,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Leadership & Management Skills",
                     Description = "Learn effective leadership, communication, and team management strategies.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -1041,7 +1041,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Amir.Salah@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Management"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Project Management & Agile Methodologies",
                     Description = "Learn project management principles and Agile methodologies like Scrum and Kanban.",
                     ListingImagePath = $"assets/img/mentor/amir_salah.jpg",
@@ -1059,7 +1059,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Photography Masterclass: From Beginner to Pro",
                     Description = "Learn the fundamentals of photography, camera settings, lighting, and composition.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1072,7 +1072,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Photography"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Advanced Editing Techniques in Lightroom & Photoshop",
                     Description = "Master professional photo editing and retouching using Lightroom and Photoshop.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1086,7 +1086,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Creative Writing & Blogging Essentials",
                     Description = "Learn how to craft compelling stories, blog posts, and engaging content.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1099,7 +1099,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Freelance Writing & Monetizing Your Content",
                     Description = "Learn how to make money writing articles, blogs, and ebooks.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1113,7 +1113,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Graphic Design"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Graphic Design with Adobe Illustrator & Photoshop",
                     Description = "Learn how to design logos, branding materials, and social media graphics.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1127,7 +1127,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Video Editing with Adobe Premiere Pro & After Effects",
                     Description = "Learn how to create professional video edits and motion graphics.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1140,7 +1140,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "Ahmed.Mostafa@live.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Video Editing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "YouTube Content Creation & Video Marketing",
                     Description = "Learn how to create engaging YouTube videos and grow your channel.",
                     ListingImagePath = $"assets/img/mentor/ahmed_mostafa.jpg",
@@ -1158,7 +1158,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "michael.harris@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Research"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Data Research and Analytics",
                     Description = "Deep dive into research methodologies and data analytics with expert guidance.",
                     ListingImagePath = "assets/img/mentor/michael_harris.jpg",
@@ -1170,7 +1170,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "michael.harris@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business Analytics"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Business Analytics and Data Science",
                     Description = "Learn business analytics with practical applications in data science.",
                     ListingImagePath = "assets/img/mentor/michael_harris.jpg",
@@ -1182,7 +1182,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ava.smith@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Business"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Business Strategy and Market Research",
                     Description = "Develop business strategies and market research techniques with real-world applications.",
                     ListingImagePath = "assets/img/mentor/ava_smith.jpg",
@@ -1194,7 +1194,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ava.smith@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Finance"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                     Title = "Finance and Investment Strategies",
                     Description = "Learn financial planning, investment strategies, and portfolio management.",
                     ListingImagePath = "assets/img/mentor/ava_smith.jpg",
@@ -1206,7 +1206,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ethan.clark@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Machine Learning"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 70.0M, FiveHours = 70.0M * 5, TenHours = 70.0M * 10 },
                     Title = "Deep Learning and AI Fundamentals",
                     Description = "Learn deep learning concepts and AI fundamentals with hands-on coding exercises.",
                     ListingImagePath = "assets/img/mentor/ethan_clark.jpg",
@@ -1218,7 +1218,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ethan.clark@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Cybersecurity"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 75.0M, FiveHours = 75.0M * 5, TenHours = 75.0M * 10 },
                     Title = "Ethical Hacking and Cybersecurity Basics",
                     Description = "Learn cybersecurity principles and ethical hacking techniques with real-world applications.",
                     ListingImagePath = "assets/img/mentor/ethan_clark.jpg",
@@ -1230,7 +1230,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "sophia.white@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Writing"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 50.0M, FiveHours = 50.0M * 5, TenHours = 50.0M * 10 },
                     Title = "Academic Writing and Research Skills",
                     Description = "Improve your academic writing and research skills with expert guidance.",
                     ListingImagePath = "assets/img/mentor/sophia_white.jpg",
@@ -1242,7 +1242,7 @@ public class ListingSeeder
                 {
                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "mei.wong@avancira.com"))?.Id ?? string.Empty,
                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Languages"))?.Id ?? 0,
-                   Rates = new ListingRates() { Hourly = 45.0M, FiveHours = 45.0M * 5, TenHours = 45.0M * 10 },
+                   HourRate = new ListingRates() { Hourly = 45.0M, FiveHours = 45.0M * 5, TenHours = 45.0M * 10 },
                    Title = "Japanese and English Language Lessons",
                    Description = "Master Japanese and English languages with structured lessons and cultural insights.",
                    ListingImagePath = "assets/img/mentor/mei_wong.jpg",
@@ -1254,7 +1254,7 @@ public class ListingSeeder
                 {
                    UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "noah.davis@avancira.com"))?.Id ?? string.Empty,
                    // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Physics"))?.Id ?? 0,
-                   Rates = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
+                   HourRate = new ListingRates() { Hourly = 65.0M, FiveHours = 65.0M * 5, TenHours = 65.0M * 10 },
                    Title = "Physics and Space Science Lessons",
                    Description = "Explore physics concepts and space science fundamentals with a passionate professor.",
                    ListingImagePath = "assets/img/mentor/noah_davis.jpg",
@@ -1266,7 +1266,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "olivia.brown@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Music"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Classical and Contemporary Music Lessons",
                     Description = "Develop musical skills and appreciation with structured lessons in classical and contemporary styles.",
                     ListingImagePath = "assets/img/mentor/olivia_brown.jpg",
@@ -1278,7 +1278,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "ava.smith@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Market Research"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 60.0M, FiveHours = 60.0M * 5, TenHours = 60.0M * 10 },
                     Title = "Market Research and Business Analytics",
                     Description = "Learn market research methodologies and business analytics for strategic decision-making.",
                     ListingImagePath = "assets/img/mentor/ava_smith.jpg",
@@ -1290,7 +1290,7 @@ public class ListingSeeder
                 {
                     UserId = context.Users.FirstOrDefault(c => EF.Functions.Like(c.Email, "charlotte.anderson@avancira.com"))?.Id ?? string.Empty,
                     // LessonCategoryId = context.LessonCategories.FirstOrDefault(c => EF.Functions.Like(c.Name, "Social Media"))?.Id ?? 0,
-                    Rates = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
+                    HourRate = new ListingRates() { Hourly = 55.0M, FiveHours = 55.0M * 5, TenHours = 55.0M * 10 },
                     Title = "Social Media Marketing Strategies",
                     Description = "Master social media marketing strategies and engagement techniques for brand growth.",
                     ListingImagePath = "assets/img/mentor/charlotte_anderson.jpg",

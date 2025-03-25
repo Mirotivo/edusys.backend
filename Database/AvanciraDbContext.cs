@@ -190,7 +190,7 @@ public class AvanciraDbContext : IdentityDbContext<User>
         {
             entity.HasKey(r => r.Id);
             entity.HasOne(r => r.Listing)
-                .WithOne(l => l.Rates)
+                .WithOne(l => l.HourRate)
                 .HasForeignKey<ListingRates>(r => r.ListingId)
                 .OnDelete(DeleteBehavior.Cascade); // Cascade delete for Rates
         });

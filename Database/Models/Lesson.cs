@@ -16,42 +16,42 @@ public class Lesson : ICreatable, IUpdatable
 
     [Required]
     public decimal Price { get; set; }
-
+    [Required]
     public string StudentId { get; set; }
-
-    [ForeignKey(nameof(Lesson.StudentId))]
-    public User? Student { get; set; }
-
+    [Required]
     public int ListingId { get; set; }
-
-    [ForeignKey(nameof(Lesson.ListingId))]
-    public Listing? Listing { get; set; }
 
     [Required]
     public bool IsStudentInitiated { get; set; }
 
+    [Required]
     public int TransactionId { get; set; }
 
-    [ForeignKey(nameof(Lesson.TransactionId))]
-    public Transaction? Transaction { get; set; }
-
     [Required]
-    [MaxLength(20)]
     public LessonStatus Status { get; set; }
 
+
+    // review 
     public string? MeetingToken { get; set; }
     public string? MeetingRoomName { get; set; }
-    public string? MeetingDomain { get; set; }
+    public string? MeetingDomain { get; set; } // this should be fixed not stored in db 
     public string? MeetingUrl { get; set; }
     public string? MeetingRoomUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public Lesson()
-    {
-        StudentId = string.Empty;
-    }
+
+
+
+    [ForeignKey(nameof(StudentId))]
+    public virtual User Student { get; set; }
+
+    [ForeignKey(nameof(TransactionId))]
+    public virtual Transaction Transaction { get; set; }
+
+    [ForeignKey(nameof(ListingId))]
+    public virtual Listing Listing { get; set; }
 
     public override string ToString()
     {

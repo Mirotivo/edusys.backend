@@ -8,51 +8,34 @@ public class Listing : IOwnableAccountable
 {
     [Key]
     public int Id { get; set; }
-
     public string UserId { get; set; }
 
-    [ForeignKey(nameof(Listing.UserId))]
-    public User? User { get; set; }
-
+    [Required]
     [MaxLength(100)]
-    public string Title { get; set; }
+    public string Title { get; set; } // Name 
 
+    [Required]
     [MaxLength(500)]
     public string Description { get; set; }
 
     [Required]
-    public ListingRates Rates { get; set; }
+    public decimal HourRate { get; set; }
 
-    [MaxLength(255)]
-    public string? ListingImagePath { get; set; }
+    public ListingLocationType Locations { get; set; } // webcam 
 
-    public ListingLocationType Locations { get; set; }
 
-    [MaxLength(500)]
-    public string AboutYou { get; set; }
-
-    [MaxLength(500)]
-    public string AboutLesson { get; set; }
-
-    public bool IsVisible { get; set; } = true;
-
-    public ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
-
-    public bool Active { get; set; }
+    // review 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+    public bool Active { get; set; } 
+    public bool IsVisible { get; set; } = true;
+    public bool DisplayInLandingPage { get; set; } = false;
 
-    public Listing()
-    {
-        UserId = string.Empty;
-        Title = string.Empty;
-        ListingImagePath = string.Empty;
-        AboutYou = string.Empty;
-        AboutLesson = string.Empty;
-        Description = string.Empty;
-        Rates = new ListingRates();
-    }
+
+    [ForeignKey(nameof(UserId))]
+    public virtual User User { get; set; }
+    public virtual ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
 
     public override string ToString()
     {

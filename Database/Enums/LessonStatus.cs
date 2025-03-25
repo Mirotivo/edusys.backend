@@ -1,10 +1,10 @@
 public enum LessonStatus
 {
-    Proposed,
-    Booked,
-    Completed,
-    Canceled,
-    Paid
+    Proposed = 1,
+    Booked = 2,
+    Completed = 3,
+    Canceled = 4,
+    Paid = 5
 }
 
 
