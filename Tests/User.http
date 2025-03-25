@@ -1,0 +1,28 @@
+@server=localhost:9000
+# @server=92.205.162.126
+
+
+###
+# {"Email":"example@gmail.com","Password":"myP@ssword","ConfirmPassword":"myP@ssword"}
+# {"Email":"amr.mostafa@live.com","Password":"12345678","ConfirmPassword":"12345678"}
+# body2002619@gmail.com
+
+POST https://{{server}}/user/register HTTP/1.1
+Host: {{server}}
+Content-Type: application/json
+Content-Length: 86
+
+{"Email":"amr.mostafa@live.com","Password":"12345678","ConfirmPassword":"12345678"}
+
+###
+POST https://{{server}}/user/login HTTP/1.1
+Host: {{server}}
+Content-Type: application/json
+
+{"Email":"example@gmail.com","Password":"myP@ssword"}
+
+
+###
+GET https://{{server}}/api/friends HTTP/1.1
+Host: {{server}}
+Authorization: Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQW1yLk1vc3RhZmFAbGl2ZS5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJBbXIuTW9zdGFmYUBsaXZlLmNvbSIsImV4cCI6MTcwMzMyMzg1NH0.qOTB1dBmGYMHsD84PdaOBUO_Uax4LTMS0iEU85NjqoQ
