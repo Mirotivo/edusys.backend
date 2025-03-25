@@ -8,6 +8,7 @@ using Backend.Infrastructure;
 using Backend.Middleware;
 using Backend.Services.BackgroundServices;
 using Backend.Services.PaymentBackgroundServices;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,10 @@ public class Program
             var builder = WebApplication.CreateBuilder(args);
             // Add Serilog to the ASP.NET Core logging pipeline
             builder.Host.UseSerilog();
+
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             // Configurations
             builder.Services.AddConfigurationMappings(builder.Configuration);

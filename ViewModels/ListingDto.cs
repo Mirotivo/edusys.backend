@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 public class ListingStatisticsDto
@@ -50,30 +52,6 @@ public class RatesDto
     public decimal FiveHours { get; set; }
     public decimal TenHours { get; set; }
 }
-
-public class CreateListingDto
-{
-    public IFormFile? ListingImage { get; set; }
-    public string? ListingImagePath { get; set; }
-
-    public string Title { get; set; }
-    public string AboutLesson { get; set; }
-    public string AboutYou { get; set; }
-    public List<string> Locations { get; set; }
-    public int? LessonCategoryId { get; set; }
-    public string? LessonCategory { get; set; }
-    public RatesDto Rates { get; set; }
-
-    public CreateListingDto()
-    {
-        Title = string.Empty;
-        AboutLesson = string.Empty;
-        AboutYou = string.Empty;
-        Locations = new List<string>();
-        Rates = new RatesDto();
-    }
-}
-
 public class UpdateTitleDto
 {
     public string Title { get; set; } = string.Empty;

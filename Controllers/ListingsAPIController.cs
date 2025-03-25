@@ -1,10 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Backend.DTOs.Listing;
+using Backend.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.Controllers;
 
@@ -13,39 +15,75 @@ namespace Backend.Controllers;
 public class ListingsAPIController : BaseController
 {
     private readonly IListingService _listingService;
+    private readonly ILogger<ListingsAPIController> _logger;
 
     public ListingsAPIController(
-        IListingService listingService
+        IListingService listingService,
+        ILogger<ListingsAPIController> logger
     )
     {
         _listingService = listingService;
+        _logger = logger;
     }
 
-    // Create
+    [Authorize]
+    [HttpGet("tutor-listings")]
+    public async Task<IActionResult> GetTutorListings([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var userId = GetUserId();
+
+        var result = await _listingService.GetTutorListingsAsync(userId, page, pageSize);
+
+        return Ok(new ApiResponse<PagedResult<ListingResponseDto>>(
+            success: true,
+            message: "User listings retrieved successfully.",
+            data: result
+        ));
+    }
+
     [Authorize]
     [HttpPost("create-listing")]
-    public async Task<IActionResult> Create([FromForm] CreateListingDto createListingDto)
+    public async Task<IActionResult> Create([FromForm] ListingRequestDto model)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            if (createListingDto == null)
-            {
-                return JsonError("Invalid data.");
-            }
+            var errors = ModelState
+                .Where(e => e.Value?.Errors.Any() ?? false)
+                .ToDictionary(e => e.Key, e => e.Value!.Errors.Select(err => err.ErrorMessage).ToList());
 
-            var userId = GetUserId();
-            var listing = await _listingService.CreateListingAsync(createListingDto, userId);
-            return CreatedAtAction(nameof(GetListingById), new { id = listing.Id }, listing);
+            return BadRequest(new ApiResponse<object>(
+                success: false,
+                message: "Validation failed.",
+                data: null!,
+                errors: errors
+            ));
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new
-            {
-                Message = "An error occurred while creating the listing.",
-                Error = ex.Message
-            });
-        }
+
+        var userId = GetUserId();
+        var listing = await _listingService.CreateListingAsync(model, userId);
+
+        return CreatedAtAction(nameof(GetListingById), new { id = listing.Id },
+            new ApiResponse<ListingResponseDto>(
+                success: true,
+                message: "Listing created successfully.",
+                data: listing
+            ));
     }
+
+    [Authorize]
+    [HttpPut("update-listing/{id}")]
+    public async Task<IActionResult> Update([FromForm] ListingRequestDto model)
+    {
+        var userId = GetUserId();
+        var updatedListing = await _listingService.UpdateListingAsync(model, userId);
+
+        return Ok(new ApiResponse<ListingResponseDto>(
+            success: true,
+            message: "Listing updated successfully.",
+            data: updatedListing
+        ));
+    }
+
 
     // Read
     [HttpGet("search")]
@@ -63,7 +101,7 @@ public class ListingsAPIController : BaseController
     public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var userId = GetUserId();
-        var listings = await _listingService.GetUserListingsAsync(userId, page, pageSize);
+        var listings = await _listingService.GetTutorListingsAsync(userId, page, pageSize);
         return JsonOk(listings);
     }
 

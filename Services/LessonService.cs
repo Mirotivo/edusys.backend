@@ -134,13 +134,12 @@ public class LessonService : ILessonService
 
         var results = lessons.Select(lesson => MapToLessonDto(lesson, userId)).ToList();
 
-        return new PagedResult<LessonDto>
-        {
-            TotalResults = totalResults,
-            Page = page,
-            PageSize = pageSize,
-            Results = results
-        };
+        return new PagedResult<LessonDto>(
+             results: results,
+             totalResults: totalResults,
+             page: page,
+             pageSize: pageSize
+         );
     }
     public async Task<PagedResult<LessonDto>> GetAllLessonsAsync(string userId, LessonFilter filters)
     {
@@ -182,7 +181,12 @@ public class LessonService : ILessonService
                .Take(pageSize)
                .Select(lesson => MapToLessonDto(lesson, userId))
                .ToListAsync();
-        return new PagedResult<LessonDto> { Results = results, TotalResults = totalResults };
+        return new PagedResult<LessonDto>(
+            results: results,
+            totalResults: totalResults,
+            page: page,
+            pageSize: pageSize
+        );
     }
     public async Task<PagedResult<LessonDto>> GetAllLessonsAsync(string userId, int page, int pageSize)
     {
@@ -203,13 +207,12 @@ public class LessonService : ILessonService
 
         var results = lessons.Select(lesson => MapToLessonDto(lesson, userId)).ToList();
 
-        return new PagedResult<LessonDto>
-        {
-            TotalResults = totalResults,
-            Page = page,
-            PageSize = pageSize,
-            Results = results
-        };
+        return new PagedResult<LessonDto>(
+             results: results,
+             totalResults: totalResults,
+             page: page,
+             pageSize: pageSize
+         );
     }
     public async Task<LessonDto> UpdateLessonStatusAsync(int lessonId, bool accept, string userId)
     {

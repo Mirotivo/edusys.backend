@@ -203,13 +203,12 @@ public class SubscriptionService : ISubscriptionService
 
         var results = lessons.ToList();
 
-        return new PagedResult<Subscription>
-        {
-            TotalResults = totalResults,
-            Page = page,
-            PageSize = pageSize,
-            Results = results
-        };
+        return new PagedResult<Subscription>(
+            results: results,
+            totalResults: totalResults,
+            page: page,
+            pageSize: pageSize
+        );
     }
 
     public async Task<PromoCode> ValidatePromoCode(string promoCode)

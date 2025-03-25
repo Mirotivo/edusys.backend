@@ -1,21 +1,23 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Backend.DTOs.Listing;
 using Microsoft.AspNetCore.Http;
 
 public interface IListingService
 {
     // Create
-    Task<ListingDto> CreateListingAsync(CreateListingDto createListingDto, string userId);
+    Task<ListingResponseDto> CreateListingAsync(ListingRequestDto model, string userId);
 
     // Read
     ListingDto GetListingById(int id);
-    Task<PagedResult<ListingDto>> GetUserListingsAsync(string userId, int page, int pageSize);
+    Task<PagedResult<ListingResponseDto>> GetTutorListingsAsync(string userId, int page, int pageSize);
     IEnumerable<ListingDto> GetLandingPageListings();
     IEnumerable<ListingDto> GetLandingPageTrendingListings();
     PagedResult<ListingDto> SearchListings(string query, List<string> categories, int page, int pageSize, double? lat = null, double? lng = null, double radiusKm = 10);
     ListingStatisticsDto GetListingStatistics();
 
     // Update
+    Task<ListingResponseDto> UpdateListingAsync(ListingRequestDto model, string userId);
     Task<bool> ModifyListingTitleAsync(int listingId, string userId, string newTitle);
     Task<bool> ModifyListingImageAsync(int listingId, string userId, IFormFile newImage);
     Task<bool> ModifyListingLocationsAsync(int listingId, string userId, List<string> newLocations);

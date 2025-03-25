@@ -44,7 +44,7 @@ public class BaseController : ControllerBase
     }
     protected IActionResult JsonError(string message = "")
     {
-        return JsonError(message, []);
+        return JsonError(message, Array.Empty<string>());
     }
 
     // JsonOk methods

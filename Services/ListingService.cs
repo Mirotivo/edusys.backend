@@ -2,127 +2,108 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Backend.DTOs.Listing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SendGrid.Helpers.Errors.Model;
 
 public class ListingService : IListingService
 {
     private readonly AvanciraDbContext _dbContext;
     private readonly IFileUploadService _fileUploadService;
     private readonly ILogger<ListingService> _logger;
+    private readonly IMapper _mapper; // Add AutoMapper
 
     public ListingService(
         AvanciraDbContext dbContext,
         IFileUploadService fileUploadService,
-        ILogger<ListingService> logger
+        ILogger<ListingService> logger,
+        IMapper mapper
     )
     {
         _dbContext = dbContext;
         _fileUploadService = fileUploadService;
         _logger = logger;
+        _mapper = mapper;
     }
 
-    public async Task<ListingDto> CreateListingAsync(CreateListingDto createListingDto, string userId)
+    public async Task<PagedResult<ListingDto>> GetTutorListingsAsync(string userId, int page, int pageSize)
     {
-        // Handle image upload
-        var imageUrl = await _fileUploadService.ReplaceFileAsync(createListingDto.ListingImage, createListingDto.ListingImagePath, "listings");
+        var query = _dbContext.Listings
+            .AsNoTracking()
+            .Where(l => l.UserId == userId)
+            .Include(l => l.ListingLessonCategories)
+                .ThenInclude(llc => llc.LessonCategory);
 
-        int lessonCategoryId;
+        var totalRecords = await query.CountAsync();
 
-        // Check for an existing category
-        if (createListingDto.LessonCategoryId.HasValue)
-        {
-            var existingCategory = await _dbContext.LessonCategories
-                .FirstOrDefaultAsync(c => c.Id == createListingDto.LessonCategoryId.Value);
+        var listings = await query
+            .OrderByDescending(l => l.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
 
-            if (existingCategory == null)
+        var listingDtos = _mapper.Map<List<ListingDto>>(listings);
+
+        return new PagedResult<ListingDto>(listingDtos, totalRecords, page, pageSize);
+    }
+
+    public async Task<ListingDto> CreateListingAsync(ListingRequestDto model, string userId)
+    {
+        var existingCategoryIds = await _dbContext.LessonCategories
+            .Where(c => model.CategoryIds.Contains(c.Id))
+            .Select(c => c.Id)
+            .ToListAsync();
+
+        if (!existingCategoryIds.Any())
+            throw new BadRequestException("No valid categories were found.");
+
+        var listing = _mapper.Map<Listing>(model);
+        listing.UserId = userId;
+
+        listing.ListingLessonCategories = existingCategoryIds
+            .Select(categoryId => new ListingLessonCategory
             {
-                throw new ArgumentException($"LessonCategoryId {createListingDto.LessonCategoryId.Value} is invalid. The category does not exist.");
-            }
-
-            lessonCategoryId = existingCategory.Id;
-        }
-        else if (!string.IsNullOrWhiteSpace(createListingDto.LessonCategory))
-        {
-            // Handle new category
-            var existingCategoryByName = await _dbContext.LessonCategories
-                .FirstOrDefaultAsync(c => c.Name.ToLower() == createListingDto.LessonCategory!.ToLower());
-
-            if (existingCategoryByName != null)
-            {
-                // Category already exists
-                lessonCategoryId = existingCategoryByName.Id;
-            }
-            else
-            {
-                // Create a new category
-                var newCategory = new LessonCategory
-                {
-                    Name = createListingDto.LessonCategory
-                };
-
-                _dbContext.LessonCategories.Add(newCategory);
-                await _dbContext.SaveChangesAsync();
-
-                lessonCategoryId = newCategory.Id;
-            }
-        }
-        else
-        {
-            throw new ArgumentException("Either LessonCategoryId or LessonCategory must be provided.");
-        }
-
-        // Create listing
-        var listing = new Listing
-        {
-            Name = createListingDto.Title,
-            //AboutLesson = createListingDto.AboutLesson,
-            //AboutYou = createListingDto.AboutYou,
-            //ListingImagePath = imageUrl,
-            Locations = createListingDto.Locations?
-                .Select(location =>
-                {
-                    if (Enum.TryParse<ListingLocationType>(location, true, out var parsedLocation))
-                    {
-                        return parsedLocation;
-                    }
-                    else
-                    {
-                        return ListingLocationType.None;
-                    }
-                })
-                .Aggregate(ListingLocationType.None, (current, parsedLocation) => current | parsedLocation)
-                ?? ListingLocationType.None,
-            ListingLessonCategories = new List<ListingLessonCategory>
-            {
-                new ListingLessonCategory { LessonCategoryId = lessonCategoryId }
-            },
-            UserId = userId,
-            HourlyRate = createListingDto.Rates.Hourly
-            //Rates = new ListingRates
-            //{
-            //    Hourly = createListingDto.Rates.Hourly,
-            //    FiveHours = createListingDto.Rates.FiveHours,
-            //    TenHours = createListingDto.Rates.TenHours
-            //}
-        };
+                ListingId = listing.Id,
+                LessonCategoryId = categoryId
+            })
+            .ToList();
 
         await _dbContext.Listings.AddAsync(listing);
         await _dbContext.SaveChangesAsync();
 
-        // Reload the listing with related data
-        var loadedListing = await _dbContext.Listings
-            .Include(l => l.User)
-            .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
-            .FirstOrDefaultAsync(l => l.Id == listing.Id);
+        return _mapper.Map<ListingDto>(listing);
+    }
 
-        if (loadedListing == null)
-        {
-            throw new InvalidOperationException("Failed to reload the listing after saving.");
-        }
+    public async Task<ListingDto> UpdateListingAsync(ListingRequestDto model, string userId)
+    {
+        var listing = await _dbContext.Listings
+            .Include(l => l.ListingLessonCategories)
+            .FirstOrDefaultAsync(l => l.Id == model.Id && l.UserId == userId);
 
-        return MapToListingDto(loadedListing);
+        if (listing is null)
+            throw new KeyNotFoundException("Listing not found or unauthorized.");
+
+        var validCategoryIds = await _dbContext.LessonCategories
+            .Where(c => model.CategoryIds.Contains(c.Id))
+            .Select(c => c.Id)
+            .ToListAsync();
+
+        if (!validCategoryIds.Any())
+            throw new ArgumentException("No valid categories found.");
+
+        listing.ListingLessonCategories.Clear();
+        listing.ListingLessonCategories = validCategoryIds
+            .Select(id => new ListingLessonCategory { ListingId = listing.Id, LessonCategoryId = id })
+            .ToList();
+
+        _mapper.Map(model, listing);
+
+        await _dbContext.SaveChangesAsync();
+
+        return _mapper.Map<ListingDto>(listing);
     }
 
 
@@ -155,12 +136,12 @@ public class ListingService : IListingService
         var results = lessons.Select(listing => MapToListingDto(listing)).ToList();
 
         return new PagedResult<ListingDto>
-        {
-            TotalResults = totalResults,
-            Page = page,
-            PageSize = pageSize,
-            Results = results
-        };
+        (
+           results: results,
+           totalResults: totalResults,
+           page: page,
+           pageSize: pageSize
+        );
     }
 
     public IEnumerable<ListingDto> GetLandingPageListings()
@@ -222,13 +203,12 @@ public class ListingService : IListingService
 
         var results = listings.Select(l => MapToListingDto(l));
 
-        return new PagedResult<ListingDto>
-        {
-            TotalResults = totalResults,
-            Page = page,
-            PageSize = pageSize,
-            Results = results
-        };
+        return new PagedResult<ListingDto>(
+            results: results,
+            totalResults: totalResults,
+            page: page,
+            pageSize: pageSize
+        );
     }
 
     public ListingStatisticsDto GetListingStatistics()
@@ -441,6 +421,21 @@ public class ListingService : IListingService
             },
             SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
         };
+    }
+
+    Task<ListingResponseDto> IListingService.CreateListingAsync(ListingRequestDto model, string userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<PagedResult<ListingResponseDto>> IListingService.GetTutorListingsAsync(string userId, int page, int pageSize)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<ListingResponseDto> IListingService.UpdateListingAsync(ListingRequestDto model, string userId)
+    {
+        throw new NotImplementedException();
     }
 }
 

@@ -18,7 +18,7 @@ public class Lesson : ICreatable, IUpdatable
     public decimal Price { get; set; }
 
     [Required]
-    public string StudentId { get; set; } = string.Empty;
+    public string StudentId { get; set; }
 
     [Required]
     public int ListingId { get; set; }

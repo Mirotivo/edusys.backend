@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Backend.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Routing;
@@ -19,7 +21,6 @@ public class GlobalExceptionMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        // Enable buffering for the request body
         context.Request.EnableBuffering();
 
         try
@@ -28,95 +29,105 @@ public class GlobalExceptionMiddleware : IMiddleware
         }
         catch (UnauthorizedAccessException ex)
         {
-            LogException(context, ex);
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync(ex.Message);
+            await HandleExceptionAsync(context, ex, StatusCodes.Status401Unauthorized, "Unauthorized access.");
+        }
+        catch (ArgumentException ex)
+        {
+            await HandleExceptionAsync(context, ex, StatusCodes.Status400BadRequest, "Invalid request parameters.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            await HandleExceptionAsync(context, ex, StatusCodes.Status500InternalServerError, "Operation failed.");
         }
         catch (Exception ex)
         {
-            LogException(context, ex);
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await context.Response.WriteAsync("An unexpected error occurred.");
+            await HandleExceptionAsync(context, ex, StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
         }
     }
 
-    private void LogException(HttpContext context, Exception exception)
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex, int statusCode, string message)
     {
-        // Extract route information
+        string traceId = Guid.NewGuid().ToString();
+        LogException(context, ex, traceId);
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
+
+        var errorResponse = new ApiResponse<object>(
+            success: false,
+            message: $"{message} (Trace ID: {traceId})",
+            data: null!,
+            errors: new Dictionary<string, List<string>> { { "error", new List<string> { ex.Message } } },
+            traceId: traceId
+        );
+
+        await context.Response.WriteAsJsonAsync(errorResponse);
+    }
+
+    private void LogException(HttpContext context, Exception exception, string traceId)
+    {
         var routeData = context.GetRouteData();
         var controller = routeData.Values["controller"]?.ToString() ?? "UnknownController";
         var action = routeData.Values["action"]?.ToString() ?? "UnknownAction";
 
-        // Log request details
         var requestDetails = new
         {
+            TraceId = traceId,
             Url = context.Request.GetDisplayUrl(),
             QueryString = context.Request.QueryString.ToString(),
             Method = context.Request.Method,
-            Body = GetRequestBody(context), // Get the request body
+            Body = GetRequestBody(context),
             Controller = controller,
             Action = action
         };
 
-        // Log the exception with request details
-        _logger.LogError(exception, "An error occurred in {Controller}/{Action}. Request details: {RequestDetails}", controller, action, requestDetails);
+        _logger.LogError(exception, "Error in {Controller}/{Action}. Trace ID: {TraceId}. Request details: {@RequestDetails}",
+            controller, action, traceId, requestDetails);
     }
 
     private string GetRequestBody(HttpContext context)
     {
         try
         {
-            if (context.Request.Body.CanSeek)
-            {
-                context.Request.Body.Seek(0, SeekOrigin.Begin); // Rewind the stream
-                using var reader = new StreamReader(context.Request.Body, Encoding.UTF8, leaveOpen: true);
-                var body = reader.ReadToEnd();
-                context.Request.Body.Seek(0, SeekOrigin.Begin); // Reset for further use
+            if (!context.Request.Body.CanSeek)
+                return "Request body is not readable.";
 
-                // Mask sensitive data if the content type is JSON
-                if (context.Request.ContentType != null && context.Request.ContentType.Contains("application/json", StringComparison.OrdinalIgnoreCase))
-                {
-                    try
-                    {
-                        var json = System.Text.Json.JsonDocument.Parse(body);
-                        var sanitizedJson = MaskSensitiveData(json);
-                        return sanitizedJson;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to parse and sanitize JSON body.");
-                    }
-                }
+            context.Request.Body.Seek(0, SeekOrigin.Begin);
+            using var reader = new StreamReader(context.Request.Body, Encoding.UTF8, leaveOpen: true);
+            var body = reader.ReadToEnd();
+            context.Request.Body.Seek(0, SeekOrigin.Begin);
 
-                return body;
-            }
+            return context.Request.ContentType?.Contains("application/json", StringComparison.OrdinalIgnoreCase) == true
+                ? MaskSensitiveData(body)
+                : body;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while reading the request body.");
+            _logger.LogError(ex, "Error while reading request body.");
+            return "Error reading request body.";
         }
-        return "Unable to read request body.";
     }
 
-    private string MaskSensitiveData(System.Text.Json.JsonDocument json)
+    private string MaskSensitiveData(string jsonString)
     {
-        var root = json.RootElement;
-        var dictionary = new Dictionary<string, object>();
-
-        foreach (var property in root.EnumerateObject())
+        try
         {
-            if (property.Name.Equals("password", StringComparison.OrdinalIgnoreCase))
+            using var jsonDoc = JsonDocument.Parse(jsonString);
+            var dictionary = new Dictionary<string, object>();
+
+            foreach (var property in jsonDoc.RootElement.EnumerateObject())
             {
-                dictionary[property.Name] = "*****";
+                dictionary[property.Name] = property.Name.Equals("password", StringComparison.OrdinalIgnoreCase)
+                    ? "*****"
+                    : property.Value.GetRawText();
             }
-            else
-            {
-                dictionary[property.Name] = property.Value.GetRawText();
-            }
+
+            return JsonSerializer.Serialize(dictionary);
         }
-
-        return System.Text.Json.JsonSerializer.Serialize(dictionary);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to parse and mask JSON request body.");
+            return "Invalid JSON format.";
+        }
     }
-
 }
-

@@ -53,13 +53,12 @@ public class LessonCategoryService : ILessonCategoryService
 
         var results = categories.Select(category => MapToLessonCategoryDto(category)).ToList();
 
-        return new PagedResult<LessonCategoryDto>
-        {
-            TotalResults = totalResults,
-            Page = page,
-            PageSize = pageSize,
-            Results = results
-        };
+        return new PagedResult<LessonCategoryDto>(
+            results: results,
+            totalResults: totalResults,
+            page: page,
+            pageSize: pageSize
+        );
     }
 
 

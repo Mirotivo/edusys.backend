@@ -1,31 +1,20 @@
-using System;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 public class PagedResult<T>
 {
-    /// <summary>
-    /// The total number of results across all pages.
-    /// </summary>
-    public int TotalResults { get; set; }
+    public int TotalResults { get; }
+    public int Page { get; }
+    public int PageSize { get; }
+    public IEnumerable<T> Results { get; }
+    public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalResults / PageSize) : 0;
 
-    /// <summary>
-    /// The current page number.
-    /// </summary>
-    public int Page { get; set; }
-
-    /// <summary>
-    /// The number of items per page.
-    /// </summary>
-    public int PageSize { get; set; }
-
-    /// <summary>
-    /// The collection of results for the current page.
-    /// </summary>
-    public IEnumerable<T> Results { get; set; } = new List<T>();
-
-    /// <summary>
-    /// The total number of pages based on the total results and page size.
-    /// </summary>
-    public int TotalPages => (int)Math.Ceiling((double)TotalResults / PageSize);
+    public PagedResult(IEnumerable<T> results, int totalResults, int page, int pageSize)
+    {
+        TotalResults = Math.Max(0, totalResults);
+        PageSize = Math.Max(1, pageSize);
+        Page = Math.Max(1, page);
+        Results = results?.ToList() ?? new List<T>();
+    }
 }
-
