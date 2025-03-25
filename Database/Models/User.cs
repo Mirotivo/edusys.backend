@@ -26,7 +26,7 @@ public class User : IdentityUser, IAccountable
     [MaxLength(255)]
     public string? HangoutId { get; set; }
     [MaxLength(255)]
-    public string? ProfileImagePath { get; set; }
+    public string? ProfileImageUrl { get; set; }
     [MaxLength(8)]
     public string? RecommendationToken { get; set; }
     public decimal TutorRefundRetention { get; set; } = 50m;

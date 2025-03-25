@@ -30,7 +30,7 @@ public class LessonCategoryService : ILessonCategoryService
     {
         return _dbContext.LessonCategories
             .OrderBy(_ => Guid.NewGuid())
-            .Where(category => category.ShowInDashboard)
+            .Where(category => category.DisplayInLandingPage)
             .Take(12)
             .Select(category => MapToLessonCategoryDto(category, _dbContext.ListingLessonCategories.Include(l => l.Listing).Count(l => l.Listing.Active && l.Listing.IsVisible && l.LessonCategoryId == category.Id)))
             .ToList();
@@ -94,7 +94,7 @@ public class LessonCategoryService : ILessonCategoryService
         {
             Id = category.Id,
             Name = category.Name,
-            Image = category.ImagePath,
+            Image = category.ImageUrl,
             Courses = courses ?? 0
         };
     }

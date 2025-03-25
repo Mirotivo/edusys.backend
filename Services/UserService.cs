@@ -295,7 +295,7 @@ public class UserService : IUserService
         user.HangoutId = updatedUser.HangoutId ?? user.HangoutId;
         user.TimeZoneId = updatedUser.TimeZoneId ?? user.TimeZoneId;
         // Handle profile image replacement
-        user.ProfileImagePath = await _fileUploadService.ReplaceFileAsync(updatedUser.ProfileImage, user.ProfileImagePath, "profiles");
+        user.ProfileImageUrl = await _fileUploadService.ReplaceFileAsync(updatedUser.ProfileImage, user.ProfileImageUrl, "profiles");
         // Update Address
         if (updatedUser.Address != null)
         {
@@ -548,7 +548,7 @@ public class UserService : IUserService
         if (user.DateOfBirth.HasValue) completedFields++;
         if (!string.IsNullOrEmpty(user.PhoneNumber)) completedFields++;
         //if (!string.IsNullOrEmpty(user.Address)) completedFields++;
-        if (!string.IsNullOrEmpty(user.ProfileImagePath)) completedFields++;
+        if (!string.IsNullOrEmpty(user.ProfileImageUrl)) completedFields++;
 
         return (int)((completedFields / (double)totalFields) * 100);
     }
@@ -594,7 +594,7 @@ public class UserService : IUserService
             PhoneNumber = user.PhoneNumber,
             Address = addressDto,
             TimeZoneId = user.TimeZoneId,
-            ProfileImagePath = user.ProfileImagePath,
+            ProfileImagePath = user.ProfileImageUrl,
             SkypeId = user.SkypeId,
             HangoutId = user.HangoutId,
             ProfileVerified = profileVerified,

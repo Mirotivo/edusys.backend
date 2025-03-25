@@ -8,14 +8,13 @@ public class LessonCategory
 
     [Required]
     [MaxLength(255)]
-    public string Name { get; set; }
-    public bool ShowInDashboard { get; set; } = false;
-    public string? ImagePath { get; set; }
-    public ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
+    public string Name { get; set; } = string.Empty;
 
-    public LessonCategory()
-    {
-        Name = string.Empty;
-    }
+    public bool DisplayInLandingPage { get; set; } = false;
+
+    [Required]
+    public string? ImageUrl { get; set; }
+
+    public virtual ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
 }
 

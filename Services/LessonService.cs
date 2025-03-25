@@ -154,7 +154,7 @@ public class LessonService : ILessonService
             query = query.Where(l => (l.Student.FirstName + " " + l.Student.LastName).Contains(filters.RecipientName));
 
         if (!string.IsNullOrWhiteSpace(filters.Topic))
-            query = query.Where(l => l.Listing.Title.Contains(filters.Topic));
+            query = query.Where(l => l.Listing.Name.Contains(filters.Topic));
 
         if (filters.StartDate.HasValue)
             query = query.Where(l => l.Date >= filters.StartDate.Value);
@@ -237,7 +237,7 @@ public class LessonService : ILessonService
 
                 // Generate meeting token and URL
                 var username = lesson.Student?.FullName ?? "Student";
-                var roomName = lesson.Listing?.Title.Replace(" ", "_") ?? "Lesson";
+                var roomName = lesson.Listing?.Name.Replace(" ", "_") ?? "Lesson";
                 var meeting = _jwtTokenService.GetMeeting(username, roomName);
                 lesson.MeetingToken = meeting.Token;
                 lesson.MeetingDomain = meeting.Domain;
@@ -337,7 +337,7 @@ public class LessonService : ILessonService
         if (!string.IsNullOrEmpty(studentId))
         {
             var tutorName = $"{lesson.Listing.User.FullName}".Trim();
-            var lessonTitle = lesson.Listing.Title ?? "the lesson";
+            var lessonTitle = lesson.Listing.Name ?? "the lesson";
             var eventData = new PropositionRespondedEvent
             {
                 StudentId = studentId,
@@ -514,7 +514,7 @@ public class LessonService : ILessonService
             ListingId = lesson.ListingId,
             Type = lesson.Status == LessonStatus.Proposed ? LessonType.Proposition : LessonType.Lesson,
             Status = lesson.Status,
-            Topic = lesson.Listing?.Title ?? "Lesson",
+            Topic = lesson.Listing?.Name ?? "Lesson",
             MeetingToken = lesson.MeetingToken,
             MeetingDomain = lesson.MeetingDomain,
             MeetingRoomName = lesson.MeetingRoomName,

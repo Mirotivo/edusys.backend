@@ -9,54 +9,40 @@ public class Listing : IOwnableAccountable
     [Key]
     public int Id { get; set; }
 
-    public string UserId { get; set; }
-
-    [ForeignKey(nameof(Listing.UserId))]
-    public User? User { get; set; }
-
-    [MaxLength(100)]
-    public string Title { get; set; }
-
-    [MaxLength(500)]
-    public string Description { get; set; }
+    [Required]
+    public string UserId { get; set; } = string.Empty;
 
     [Required]
-    public ListingRates Rates { get; set; }
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
 
-    [MaxLength(255)]
-    public string? ListingImagePath { get; set; }
+    [Required]
+    [MaxLength(500)]
+    public string Description { get; set; } = string.Empty;
+
+    [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Hourly rate must be a positive value.")]
+    public decimal HourlyRate { get; set; }
 
     public ListingLocationType Locations { get; set; }
 
-    [MaxLength(500)]
-    public string AboutYou { get; set; }
-
-    [MaxLength(500)]
-    public string AboutLesson { get; set; }
-
     public bool IsVisible { get; set; } = true;
 
-    public ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
+    public bool DisplayInLandingPage { get; set; } = false;
 
     public bool Active { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
 
-    public Listing()
-    {
-        UserId = string.Empty;
-        Title = string.Empty;
-        ListingImagePath = string.Empty;
-        AboutYou = string.Empty;
-        AboutLesson = string.Empty;
-        Description = string.Empty;
-        Rates = new ListingRates();
-    }
+
+    [ForeignKey(nameof(UserId))]
+    public virtual User User { get; set; } = new User();
+    public virtual ICollection<ListingLessonCategory> ListingLessonCategories { get; set; } = new List<ListingLessonCategory>();
 
     public override string ToString()
     {
-        return $"Listing: {Id}, Title: {Title}, UserId: {UserId}, IsVisible: {IsVisible}";
+        return $"Listing: {Id}, Title: {Name}, UserId: {UserId}, IsVisible: {IsVisible}";
     }
 }
 

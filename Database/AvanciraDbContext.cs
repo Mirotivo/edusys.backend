@@ -70,12 +70,6 @@ public class AvanciraDbContext : IdentityDbContext<User>
             .Property(l => l.Price)
             .HasPrecision(18, 4);
 
-        modelBuilder.Entity<ListingRates>(entity =>
-        {
-            entity.Property(r => r.Hourly).HasPrecision(18, 4);
-            entity.Property(r => r.FiveHours).HasPrecision(18, 4);
-            entity.Property(r => r.TenHours).HasPrecision(18, 4);
-        });
 
         modelBuilder.Entity<Subscription>()
             .Property(s => s.Amount)
@@ -185,15 +179,6 @@ public class AvanciraDbContext : IdentityDbContext<User>
             .HasForeignKey(uc => uc.UserId)
             .OnDelete(DeleteBehavior.Cascade); // Cascade delete when a user is deleted
 
-        // Configure ListingRates entity
-        modelBuilder.Entity<ListingRates>(entity =>
-        {
-            entity.HasKey(r => r.Id);
-            entity.HasOne(r => r.Listing)
-                .WithOne(l => l.Rates)
-                .HasForeignKey<ListingRates>(r => r.ListingId)
-                .OnDelete(DeleteBehavior.Cascade); // Cascade delete for Rates
-        });
 
         // Configure Referrals entity
         modelBuilder.Entity<Referral>()

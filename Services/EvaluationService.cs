@@ -125,7 +125,7 @@ public class EvaluationService : IEvaluationService
                     Name = reviewee?.FullName,
                     Subject = $"Pending Review for {x.Role}",
                     Feedback = $"You have not reviewed this {x.Role.ToLower()} yet.",
-                    Avatar = reviewee?.ProfileImagePath
+                    Avatar = reviewee?.ProfileImageUrl
                 };
             })
             .ToList();
@@ -145,7 +145,7 @@ public class EvaluationService : IEvaluationService
                 Name = r.Reviewer.FullName,
                 Subject = r.Title,
                 Feedback = r.Comments,
-                Avatar = r.Reviewer.ProfileImagePath
+                Avatar = r.Reviewer.ProfileImageUrl
             })
             .ToListAsync();
     }
@@ -163,7 +163,7 @@ public class EvaluationService : IEvaluationService
                 Name = r.Reviewee.FullName,
                 Subject = r.Title,
                 Feedback = r.Comments,
-                Avatar = r.Reviewee.ProfileImagePath
+                Avatar = r.Reviewee.ProfileImageUrl
             })
             .ToListAsync();
     }
@@ -181,7 +181,7 @@ public class EvaluationService : IEvaluationService
                 Name = r.Reviewer.FullName,
                 Subject = r.Title,
                 Feedback = r.Comments,
-                Avatar = r.Reviewer.ProfileImagePath
+                Avatar = r.Reviewer.ProfileImageUrl
             })
             .ToListAsync();
     }

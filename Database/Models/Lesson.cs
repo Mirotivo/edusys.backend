@@ -17,28 +17,22 @@ public class Lesson : ICreatable, IUpdatable
     [Required]
     public decimal Price { get; set; }
 
-    public string StudentId { get; set; }
+    [Required]
+    public string StudentId { get; set; } = string.Empty;
 
-    [ForeignKey(nameof(Lesson.StudentId))]
-    public User? Student { get; set; }
-
+    [Required]
     public int ListingId { get; set; }
 
-    [ForeignKey(nameof(Lesson.ListingId))]
-    public Listing? Listing { get; set; }
+    [Required]
+    public int TransactionId { get; set; }
 
     [Required]
     public bool IsStudentInitiated { get; set; }
 
-    public int TransactionId { get; set; }
-
-    [ForeignKey(nameof(Lesson.TransactionId))]
-    public Transaction? Transaction { get; set; }
-
     [Required]
-    [MaxLength(20)]
     public LessonStatus Status { get; set; }
 
+    // TODO: Remove Domain , check if Url and RoomUrl are needed
     public string? MeetingToken { get; set; }
     public string? MeetingRoomName { get; set; }
     public string? MeetingDomain { get; set; }
@@ -48,10 +42,15 @@ public class Lesson : ICreatable, IUpdatable
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public Lesson()
-    {
-        StudentId = string.Empty;
-    }
+
+    [ForeignKey(nameof(StudentId))]
+    public virtual User Student { get; set; } = new User();
+
+    [ForeignKey(nameof(TransactionId))]
+    public virtual Transaction Transaction { get; set; } = new Transaction();
+
+    [ForeignKey(nameof(ListingId))]
+    public virtual Listing Listing { get; set; } = new Listing();
 
     public override string ToString()
     {

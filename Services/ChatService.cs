@@ -78,8 +78,8 @@ public class ChatService : IChatService
                     ? c.Tutor?.FullName ?? "Unknown Tutor"
                     : c.Student?.FullName ?? "Unknown Student",
                 ProfileImagePath = c.StudentId == userId
-                    ? c.Tutor?.ProfileImagePath ?? ""
-                    : c.Student?.ProfileImagePath ?? "",
+                    ? c.Tutor?.ProfileImageUrl ?? ""
+                    : c.Student?.ProfileImageUrl ?? "",
                 LastMessage = latestMessage?.Content ?? "No messages yet",
                 Timestamp = latestMessage?.SentAt ?? c.CreatedAt,
                 Messages = c.Messages.Select(m => new MessageDto

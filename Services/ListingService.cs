@@ -76,10 +76,10 @@ public class ListingService : IListingService
         // Create listing
         var listing = new Listing
         {
-            Title = createListingDto.Title,
-            AboutLesson = createListingDto.AboutLesson,
-            AboutYou = createListingDto.AboutYou,
-            ListingImagePath = imageUrl,
+            Name = createListingDto.Title,
+            //AboutLesson = createListingDto.AboutLesson,
+            //AboutYou = createListingDto.AboutYou,
+            //ListingImagePath = imageUrl,
             Locations = createListingDto.Locations?
                 .Select(location =>
                 {
@@ -99,12 +99,13 @@ public class ListingService : IListingService
                 new ListingLessonCategory { LessonCategoryId = lessonCategoryId }
             },
             UserId = userId,
-            Rates = new ListingRates
-            {
-                Hourly = createListingDto.Rates.Hourly,
-                FiveHours = createListingDto.Rates.FiveHours,
-                TenHours = createListingDto.Rates.TenHours
-            }
+            HourlyRate = createListingDto.Rates.Hourly
+            //Rates = new ListingRates
+            //{
+            //    Hourly = createListingDto.Rates.Hourly,
+            //    FiveHours = createListingDto.Rates.FiveHours,
+            //    TenHours = createListingDto.Rates.TenHours
+            //}
         };
 
         await _dbContext.Listings.AddAsync(listing);
@@ -114,7 +115,6 @@ public class ListingService : IListingService
         var loadedListing = await _dbContext.Listings
             .Include(l => l.User)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
-            .Include(l => l.Rates)
             .FirstOrDefaultAsync(l => l.Id == listing.Id);
 
         if (loadedListing == null)
@@ -129,7 +129,6 @@ public class ListingService : IListingService
     public ListingDto GetListingById(int id)
     {
         var listing = _dbContext.Listings
-            .Include(l => l.Rates)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User).ThenInclude(l => l.Address)
             .FirstOrDefault(l => l.Id == id);
@@ -140,7 +139,6 @@ public class ListingService : IListingService
     public async Task<PagedResult<ListingDto>> GetUserListingsAsync(string userId, int page, int pageSize)
     {
         var queryable = _dbContext.Listings
-            .Include(l => l.Rates)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.UserId == userId);
@@ -168,7 +166,6 @@ public class ListingService : IListingService
     public IEnumerable<ListingDto> GetLandingPageListings()
     {
         var listings = _dbContext.Listings
-            .Include(l => l.Rates)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.IsVisible)
@@ -182,7 +179,6 @@ public class ListingService : IListingService
     public IEnumerable<ListingDto> GetLandingPageTrendingListings()
     {
         var listings = _dbContext.Listings
-            .Include(l => l.Rates)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.Active && l.IsVisible)
@@ -196,13 +192,10 @@ public class ListingService : IListingService
     public PagedResult<ListingDto> SearchListings(string query, List<string> categories, int page, int pageSize, double? lat = null, double? lng = null, double radiusKm = 10)
     {
         var queryable = _dbContext.Listings
-            .Include(l => l.Rates)
             .Include(l => l.ListingLessonCategories).ThenInclude(l => l.LessonCategory)
             .Include(l => l.User).ThenInclude(l => l.Address)
-            .Where(l => EF.Functions.Like(l.Title, $"%{query}%") ||
-                        EF.Functions.Like(l.Description, $"%{query}%") ||
-                        EF.Functions.Like(l.AboutLesson, $"%{query}%") ||
-                        EF.Functions.Like(l.AboutYou, $"%{query}%"));
+            .Where(l => EF.Functions.Like(l.Name, $"%{query}%") ||
+                        EF.Functions.Like(l.Description, $"%{query}%"));
         // Apply category filtering if categories are selected
         if (categories.Any())
         {
@@ -267,7 +260,7 @@ public class ListingService : IListingService
 
         if (listing == null) return false;
 
-        listing.Title = newTitle;
+        listing.Name = newTitle;
         _dbContext.Listings.Update(listing);
         await _dbContext.SaveChangesAsync();
         return true;
@@ -282,8 +275,8 @@ public class ListingService : IListingService
 
         if (listing == null) return false;
 
-        var imageUrl = await _fileUploadService.ReplaceFileAsync(newImage, listing.ListingImagePath, "listings");
-        listing.ListingImagePath = imageUrl;
+        //var imageUrl = await _fileUploadService.ReplaceFileAsync(newImage, listing.ListingImagePath, "listings");
+        //listing.ListingImagePath = imageUrl;
         _dbContext.Listings.Update(listing);
         await _dbContext.SaveChangesAsync();
         return true;
@@ -325,8 +318,8 @@ public class ListingService : IListingService
 
         if (listing == null) return false;
 
-        listing.AboutLesson = newAboutLesson;
-        listing.AboutYou = newAboutYou;
+        listing.Description = newAboutLesson;
+        //listing.AboutYou = newAboutYou;
         _dbContext.Listings.Update(listing);
         await _dbContext.SaveChangesAsync();
         return true;
@@ -356,16 +349,13 @@ public class ListingService : IListingService
     public async Task<bool> ModifyListingRatesAsync(int listingId, string userId, RatesDto newRates)
     {
         var listing = await _dbContext.Listings
-            .Include(l => l.Rates)
             .Where(l => l.Id == listingId && l.UserId == userId)
             .AsTracking()
             .FirstOrDefaultAsync();
 
         if (listing == null) return false;
 
-        listing.Rates.Hourly = newRates.Hourly;
-        listing.Rates.FiveHours = newRates.FiveHours;
-        listing.Rates.TenHours = newRates.TenHours;
+        listing.HourlyRate = newRates.Hourly;
         _dbContext.Listings.Update(listing);
         await _dbContext.SaveChangesAsync();
         return true;
@@ -433,21 +423,21 @@ public class ListingService : IListingService
             TutorAddress = addressDto,
             Reviews = 0,
             LessonCategory = listing.ListingLessonCategories.FirstOrDefault()?.LessonCategory.Name,
-            Title = listing.Title,
-            ListingImagePath = listing.ListingImagePath,
+            Title = listing.Name,
+            ListingImagePath = listing.User.ProfileImageUrl,
             Locations = Enum.GetValues(typeof(ListingLocationType))
                             .Cast<ListingLocationType>()
                             .Where(location => (listing.Locations & location) == location && location != ListingLocationType.None)
                             .Select(location => location.ToString())
                             .ToList(),
-            AboutLesson = listing.AboutLesson,
-            AboutYou = listing.AboutYou,
-            Rate = $"{listing.Rates.Hourly}/h",
+            AboutLesson = listing.Description, // listing.AboutLesson,
+            AboutYou = string.Empty, // listing.AboutYou,
+            Rate = $"{listing.HourlyRate}/h",// $"{listing.Rates.Hourly}/h",
             Rates = new RatesDto
             {
-                Hourly = listing.Rates.Hourly,
-                FiveHours = listing.Rates.FiveHours,
-                TenHours = listing.Rates.TenHours
+                Hourly = listing.HourlyRate,
+                FiveHours = listing.HourlyRate * 5,
+                TenHours = listing.HourlyRate * 10
             },
             SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
         };
